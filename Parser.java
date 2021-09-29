@@ -5,15 +5,10 @@ import java.util.Collections;
 
 public class Parser {
 
-    private BufferedReader br;
+    private final BufferedReader br;
 
-    public Parser(String filepath) {
-        try {
-            this.br = new BufferedReader(new FileReader(filepath));
-        } catch (Exception e) {
-            System.out.println("Nastal problém při vstupu ze souboru.");
-            e.printStackTrace();
-        }
+    public Parser(String filepath) throws FileNotFoundException {
+        this.br = new BufferedReader(new FileReader(filepath));
     }
 
     public ArrayList<Double> getInput() {
@@ -55,7 +50,7 @@ public class Parser {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            System.out.println("Nastal problém při vstupu ze souboru.");
+            System.out.println("Nastal problém při čtení ze souboru.");
             e.printStackTrace();
         }
             return inputData;

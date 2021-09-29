@@ -1,9 +1,18 @@
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-        Parser parser = new Parser("data/parser.txt");
+        Parser parser;
+        try {
+            parser = new Parser("data/parser.txt");
+        } catch (FileNotFoundException e) {
+            System.out.println("Chyba při načítání souboru:");
+            e.printStackTrace();
+            return;
+        }
+
         ArrayList<Double> data = parser.getInput();
         for(Double d : data) {
             System.out.println(d);

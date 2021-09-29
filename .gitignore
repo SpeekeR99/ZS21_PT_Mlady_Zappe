@@ -4,6 +4,10 @@
 #testing data
 ./data/*
 
+#IDEA stuff
+./.idea/*
+*.iml
+
 # Log file
 *.log
 
