@@ -1,0 +1,9 @@
+:-) Prázdné řádky nečteme vůbec
+
+:-) Toto je stejný dataset jako tutorial.txt, jen to má otestovat Váš parser ...
+500000 1000000 3 200000 1400000 1000 3600 800000  600000 1500 7200 100000
+1300000    1800 9000 2 :-) Je potřeba si poradit i s vícero mezerami, tabulátory apod.
+
+:-) Nečtěte tyto hodnoty: 666 15 87 996 16 :-) A ani zde: 78 95 15 :D
+200000 1400000 2500 277.777777778 :-) A také s komentáři na konci řádek
+500000 			1000000 2000 138.888888889

@@ -1,0 +1,60 @@
+:-) Smajlík uvozuje začátek komentáře, končí znakem konce řádky, prázdné řádky se ignorují, kódování UTF-8, UNIX konce řádek
+:-) Jako první dvě informace budou zadány souřadnice Paříže *a* a *b*
+500000 1000000
+:-) Dále bude zadán celkový počet koní *K*
+3
+:-) Dalšími údaji bude pro každého koně jeho souřadnice *x* a *y*, hmotnost i s vybavením *m* a doba naložení *n*
+200000 1400000 1000 3600
+800000  600000 1500 7200
+100000 1300000 1800 9000
+:-) Následuje počet letounů *L*
+2
+:-) A konečně pro každý letoun souřadnice *X* a *Y*, maximální zatížení *M* a rychlost letu *V* (vše ve shodných jednotkách)
+200000 1400000 2500 277.777777778
+500000 1000000 2000 138.888888889
+
+:-) Situační mapa:
+:-)                        (kůň 1)
+:-)                           X
+:-)                          /
+:-)                         /
+:-)                        / 5
+:-)                       /
+:-)                      /
+:-)                   /ˇX (Francie a letoun 1)
+:-)                 /ˇ /
+:-)               /ˇ  /
+:-)           5 /ˇ   / 5
+:-)           /ˇ    /
+:-)         /ˇ     /
+:-)        X      X
+:-)    (kůň 2)    (letoun 0 a kůň 0)
+:-)
+:-) Výsledek:
+:-) Slovní popis:
+:-) Čas   0h: Letadlo 0 je na souřadnicích 200km a 1400km, tedy hned u koně 0, toho naloží za 1h, čímž se mu sníží nosnost z 2500kg na 1500kg
+:-) Čas   0h: Letadlo 1 mezitím poletí rychlostí 500km/h ke koni 2, kam to má 500km, bude mu to tedy trvat dobu 1h
+:-) Čas   1h: Po jedné hodině má letadlo 0 naloženo a je připraveno k odletu, letadlo 1 akorát přilétlo ke koni 2.
+:-) Čas   1h: Letadlo 0 poletí ze souřadnic 200km a 1400km pro koně 1, který je na souřadnicích 800km a 600km, tedy poletí 1000km, rychlostí 1000km/h mu to bude trvat hodinu
+:-) Čas   1h: Letadlo 1 bude dvě a půl hodiny nakládat koně 2.
+:-) Čas   2h: Po druhé hodině letadlo 0 akorát přistálo u koně 1, letadlo 1 nakládá koně 2
+:-) Čas   2h: Letadlo 0 začíná nakládat koně 1, to mu bude trvat 2 hodiny
+:-) Čas   3h: Po třetí hodině simulace obě letadla právě nakládájí, letadlo 0 bude ještě jednu hodinu, letadlo 1 bude ještě půl hodiny
+:-) Čas 3.5h: Letadlo 1 naložilo koně 2 a odlétá na olympijské hry vzdálené 500km rychlostí 500km/h, tedy poletí 1 hodinu
+:-) Čas   4h: Po čtvrté hodině simulace letadlo 0 právě naložilo koně 1, letadlo 1 poletí ještě půl hodiny
+:-) Čas   4h: Letadlo 0 poletí na olympijská hry, které jsou na souřadnicích 500km a 1000km, tedy 500km daleko, to mu bude trvat půl hodiny
+:-) Čas 4.5h: Letadlo 1 přistálo ve Francii, má na palubě koně 2 a bude ho vykládat dvě a půl hodiny
+:-) Čas 4.5h: Letadlo 0 přistálo ve Francii, má na palubě koně 0 a 1, bude tedy vykládat celkem 3 hodiny
+:-) Čas   7h: Letadlo 1 vše vyložilo
+:-) Čas 7.5h: Letadlo 0 vše vyložilo a je konec simulace.
+:-)
+:-) Je tedy třeba dopravu naplánovat minimálně 7.5 hodiny dopředu.
+:-)
+:-) Výpis do standardního výstupu:
+:-) Čas 0, Letoun 0, Start z mista: 200000 1400000
+:-) Čas 0, Letoun 1, Start z mista: 500000 1000000
+:-) Čas 0, Letoun 0, Naklad kone: 0, Odlet v: 3600, Let ke koni: 1
+:-) Čas 3600, Letoun 1, Naklad kone: 2, Odlet v: 12600, Let do Francie
+:-) Čas 7200, Letoun 0, Naklad kone: 1, Odlet v: 14400, Let do Francie
+:-) Čas 16200, Letoun 1, Pristani ve Francii, Vylozeno v: 25200
+:-) Čas 16200, Letoun 0, Pristani ve Francii, Vylozeno v: 27000
