@@ -30,3 +30,34 @@ public class Main {
 
 
 }
+
+class GraphTest{
+
+    public static void main(String[] args) {
+        String[] nodes = {"a","b","c","d","e","f","g","h","i"};
+        AGraph<String> graph = new AdjMatrixGraph<>(nodes, new FloydWarshall());
+        //graph: https://d2vlcm61l7u1fs.cloudfront.net/media%2F7a1%2F7a1276dd-60b9-4d39-a33e-ef0efc52d63c%2FphpdlMnsA.png
+
+        graph.addEdge("a","b",4);
+        graph.addEdge("b","d",9);
+        graph.addEdge("b","c",11);
+        graph.addEdge("c","a",8);
+        graph.addEdge("d","e",2);
+        graph.addEdge("d","f",6);
+        graph.addEdge("d","c",7);
+        graph.addEdge("e","b",8);
+        graph.addEdge("e","g",7);
+        graph.addEdge("e","h",4);
+        graph.addEdge("f","e",5);
+        graph.addEdge("f","c",1);
+        graph.addEdge("g","i",9);
+        graph.addEdge("g","h",14);
+        graph.addEdge("h","f",2);
+        graph.addEdge("h","i",10);
+
+        graph.startAlgorithm();
+        System.out.println(graph.getDistance("a","i"));
+
+
+    }
+}

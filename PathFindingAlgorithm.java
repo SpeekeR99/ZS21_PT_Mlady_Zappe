@@ -16,7 +16,7 @@ public interface PathFindingAlgorithm {
      * @return      queue or stack of vertices on the path
      * @throws RuntimeException if the path does not exist (cannot reach <code>end</code> from <code>start</code>
      */
-    IntADT reconstructPath(int start, int end) throws RuntimeException;
+    IntQueue reconstructPath(int start, int end) throws RuntimeException;
 
     /**
      * Returns the distance between two vertices
@@ -51,16 +51,7 @@ class FloydWarshall implements PathFindingAlgorithm{
         }
 
         //F-W algo
-        for (int k = 0; k < N; k++) {
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j < N; j++) {
-                    if (dist[i][j] > dist[i][k] + dist[k][j]) {
-                        dist[i][j] = dist[i][k] + dist[k][j];
-                        next[i][j] = next[i][k];
-                    }
-                }
-            }
-        }
+        FW_algo(N);
         //dist[i][j]: len of shortest path from i to j
         //next[i][j]: the vertex k, through which leads the shortest path from i to j
     }
@@ -85,62 +76,37 @@ class FloydWarshall implements PathFindingAlgorithm{
     public double getDistance(int start, int end) {
         return dist[start][end];
     }
-}
 
-interface IntADT{
-    /**
-     * adds the number to the collection
-     * @param i the number to add
-     */
-    void push(int i);
-
-    /**
-     * gets the current number
-     * @return the current number in the collection
-     */
-    int pop();
-}
-class IntStack implements IntADT{
-
-
-    private IntADTEntry head;
-
-    @Override
-    public void push(int i){
-        head = new IntADTEntry(i, head);
+    private void FW_algo(int N){
+        for (int k = 0; k < N; k++) {
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        next[i][j] = next[i][k];
+                    }
+                }
+            }
+        }
     }
-    @Override
-    public int pop(){
-        int r = head.val;
-        head = head.next;
-        return r;
-    }
+
 }
-class IntQueue implements IntADT{
-    private IntADTEntry head;
-    private IntADTEntry tail;
+
+class DijkstraAllPaths implements PathFindingAlgorithm{
 
     @Override
-    public void push(int i) {
-        IntADTEntry n = new IntADTEntry(i,tail);
-        tail.next = n;
-        tail = n;
+    public void start(AGraph<?> graph) {
+
     }
 
     @Override
-    public int pop() {
-        int r = head.val;
-        head = head.next;
-        return r;
+    public IntQueue reconstructPath(int start, int end) throws RuntimeException {
+        return null;
+    }
+
+    @Override
+    public double getDistance(int start, int end) {
+        return 0;
     }
 }
 
-class IntADTEntry {
-    int val;
-    IntADTEntry next;
-
-    public IntADTEntry(int val, IntADTEntry next) {
-        this.val = val;
-        this.next = next;
-    }
-}
