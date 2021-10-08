@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public interface PathFindingAlgorithm {
 
     /**
@@ -92,16 +94,62 @@ class FloydWarshall implements PathFindingAlgorithm{
 
 }
 
-class DijkstraAllPaths implements PathFindingAlgorithm{
+class ClosestNeighbourPath implements PathFindingAlgorithm{
+
+    MinHeap[] neighbours;
+    boolean[] visited;
+    int start;
+    IntQueue path;
+
+    public ClosestNeighbourPath(int start) {
+        this.start = start;
+    }
 
     @Override
     public void start(AGraph<?> graph) {
+        //prep
+        int n = graph.getNumOfVertices();
+        path = new IntQueue();
+        visited = new boolean[n];
+        visited[start] = true;
 
+        neighbours = new MinHeap[n];
+        for (int i = 0; i < n; i++) {
+            neighbours[i] = new MinHeap(n);
+        }
+
+        //populate neighbours
+        for (int i = 0; i < n; i++) {
+            int curNode = i;
+            graph.getNeighbours(i).foreach(x ->
+                neighbours[curNode].push(x, graph.getWeight(curNode,x))
+            );
+        }
+
+        //the algorithm
+        int curNode = start;
+        path.push(start);
+
+        int closest;
+        int goneThrough = 1;
+
+        //we gotta go through all nodes
+        while(goneThrough<n){
+            closest = neighbours[curNode].pop().node;
+            if(visited[closest]){
+                //if already visited, it is yeeted out and not used
+                continue;
+            }
+            path.push(closest);
+            visited[closest] = true;
+            curNode = closest;
+            ++goneThrough;
+        }
     }
 
     @Override
     public IntQueue reconstructPath(int start, int end) throws RuntimeException {
-        return null;
+        return path;
     }
 
     @Override
@@ -109,4 +157,3 @@ class DijkstraAllPaths implements PathFindingAlgorithm{
         return 0;
     }
 }
-

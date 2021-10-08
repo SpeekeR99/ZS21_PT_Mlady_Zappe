@@ -69,7 +69,7 @@ public abstract class AGraph<N> {
 
 class AdjMatrixGraph<N> extends AGraph<N>{
 
-    double[][] adjMatrix;
+    public double[][] adjMatrix;
 
     /**
      * Creates a graph with vertices only from the specified array of nodes
@@ -92,10 +92,10 @@ class AdjMatrixGraph<N> extends AGraph<N>{
     @Override
     IntADT getNeighbours(int node) {
         double[] neibsArr = adjMatrix[node]; //neighbours in the adj matrix
-        IntStack neibs = new IntStack();     //the to be returned structure
+        IntQueue neibs = new IntQueue();     //the to be returned structure
 
         //for all vertices except this one (node), check whether there exists an edge (the weight is less than infinity)
-        //and if so, add it to the stack of neighbours
+        //and if so, add it to the queue of neighbours
         for (int i = 0; i < neibsArr.length; i++) {
             if(i!=node && neibsArr[i]<Double.POSITIVE_INFINITY)
                 neibs.push(i);

@@ -1,7 +1,7 @@
-
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Main {
 
@@ -32,32 +32,72 @@ public class Main {
 }
 
 class GraphTest{
+    static Random r = new Random(1);
 
     public static void main(String[] args) {
-        String[] nodes = {"a","b","c","d","e","f","g","h","i"};
-        AGraph<String> graph = new AdjMatrixGraph<>(nodes, new FloydWarshall());
-        //graph: https://d2vlcm61l7u1fs.cloudfront.net/media%2F7a1%2F7a1276dd-60b9-4d39-a33e-ef0efc52d63c%2FphpdlMnsA.png
+        testGraph();
+    }
 
-        graph.addEdge("a","b",4);
-        graph.addEdge("b","d",9);
-        graph.addEdge("b","c",11);
-        graph.addEdge("c","a",8);
-        graph.addEdge("d","e",2);
-        graph.addEdge("d","f",6);
-        graph.addEdge("d","c",7);
-        graph.addEdge("e","b",8);
-        graph.addEdge("e","g",7);
-        graph.addEdge("e","h",4);
-        graph.addEdge("f","e",5);
-        graph.addEdge("f","c",1);
-        graph.addEdge("g","i",9);
-        graph.addEdge("g","h",14);
-        graph.addEdge("h","f",2);
-        graph.addEdge("h","i",10);
+    public static void testHeap(){
+        MinHeap h = new MinHeap(10_000);
+        for (int i = 0; i < h.size(); i++) {
+            h.push(i,r.nextDouble());
+        }
+        double[] p = new double[h.size()];
+        for (int i = 0; i < h.size(); i++) {
+            p[i] = h.pop().weight;
+        }
 
+        for (int i = 1; i < p.length; i++) {
+            if(p[i-1]>p[i]) {
+                System.out.println("NE "+i);
+
+            }
+        }
+
+        for (double v :p) {
+            System.out.println(v);
+        }
+    }
+    public static void testGraph() {
+
+        Place[] nodes = new Place[7000];
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = new Place(100*r.nextDouble(), 100*r.nextDouble());
+        }
+
+        AdjMatrixGraph<Place> graph = new AdjMatrixGraph<>(nodes, new ClosestNeighbourPath(0));
+
+        for (int i = 0; i < nodes.length; i++) {
+            for (int j = 0; j < nodes.length; j++) {
+                graph.addEdge(i,j,nodes[i].dist(nodes[j]));
+            }
+        }
+
+      //  System.out.println(Arrays.deepToString(graph.adjMatrix));
+        double time = System.nanoTime();
         graph.startAlgorithm();
-        System.out.println(graph.getDistance("a","i"));
+        time = System.nanoTime()-time;
+        System.out.println(time/1000000);
+        graph.reconstructPath(0,0).foreach(System.out::println);
+        time = System.nanoTime()-time;
+        System.out.println(time);
 
 
+    }
+
+    static class Place{
+        double x,y;
+
+        public Place(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public double dist(Place b){
+            double difX = this.x-b.x;
+            double difY = this.y-b.y;
+            return Math.sqrt(difX*difX+difY*difY);
+        }
     }
 }
