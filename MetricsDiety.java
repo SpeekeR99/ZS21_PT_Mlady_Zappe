@@ -12,18 +12,18 @@ public interface MetricsDiety {
     double dist(MetricsDiety other) throws IllegalArgumentException;
 }
 
-class CaresianDiety implements MetricsDiety{
+class CartesianDiety implements MetricsDiety{
     final double x, y;
 
-    public CaresianDiety(double x, double y) {
+    public CartesianDiety(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
     @Override
     public double dist(MetricsDiety other) throws IllegalArgumentException {
-        if(other instanceof CaresianDiety){
-            CaresianDiety b = (CaresianDiety) other;
+        if(other instanceof CartesianDiety){
+            CartesianDiety b = (CartesianDiety) other;
             double difX = this.x- b.x;
             double difY = this.y-b.y;
             return Math.sqrt(difX*difX+difY*difY);
