@@ -1,5 +1,5 @@
 import java.util.Arrays;
-
+@Deprecated
 public interface PathFindingAlgorithm {
 
     /**
@@ -30,7 +30,7 @@ public interface PathFindingAlgorithm {
      */
     double getDistance(int start,int end);
 }
-
+@Deprecated
 class FloydWarshall implements PathFindingAlgorithm{
 
     private double[][] dist;
@@ -94,7 +94,8 @@ class FloydWarshall implements PathFindingAlgorithm{
 
 }
 
-class ClosestNeighbourPath implements PathFindingAlgorithm{
+
+class ClosestNeighbourPath{
 
     MinHeap[] neighbours;
     boolean[] visited;
@@ -105,9 +106,8 @@ class ClosestNeighbourPath implements PathFindingAlgorithm{
         this.start = start;
     }
 
-    @Override
-    public void start(AGraph<?> graph) {
-        //prep
+    public void start(MetricsGraph graph) {
+        //----------------prep
         int n = graph.getNumOfVertices();
         path = new IntQueue();
         visited = new boolean[n];
@@ -120,22 +120,20 @@ class ClosestNeighbourPath implements PathFindingAlgorithm{
 
         //populate neighbours
         for (int i = 0; i < n; i++) {
-            int curNode = i;
-            graph.getNeighbours(i).foreach(x ->
-                neighbours[curNode].push(x, graph.getWeight(curNode,x))
-            );
+            for (int j = 0; j < n; j++) {
+                neighbours[i].push(j,graph.getWeight(i,j));
+            }
         }
 
-        //the algorithm
+        //---------------the algorithm
         int curNode = start;
         path.push(start);
-
         int closest;
-        int goneThrough = 1;
+        int goneThrough = 1; //already "gone through" the first node
 
         //we gotta go through all nodes
         while(goneThrough<n){
-            closest = neighbours[curNode].pop().node;
+            closest = neighbours[curNode].pop().node();
             if(visited[closest]){
                 //if already visited, it is yeeted out and not used
                 continue;
@@ -147,13 +145,11 @@ class ClosestNeighbourPath implements PathFindingAlgorithm{
         }
     }
 
-    @Override
     public IntQueue reconstructPath(int start, int end) throws RuntimeException {
         return path;
     }
 
-    @Override
-    public double getDistance(int start, int end) {
-        return 0;
+    public void setStart(int start) {
+        this.start = start;
     }
 }

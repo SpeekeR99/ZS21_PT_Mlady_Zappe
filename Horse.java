@@ -11,8 +11,15 @@ public class Horse extends GraphNode {
     /** time taken to get onboard / off the aircraft */
     public double time;
 
-    public Horse(MetricsDiety position, double weight, double time) {
-        super(position);
+    /**
+     * Creates a new Horse object
+     * @param x the x coordinate in cartesian system, the radius in polar
+     * @param y the y coordinate in cartesian system, the angle in polar
+     * @param weight the horse's weight
+     * @param time the time required to load the horse (and its stuff) onto an aircraft
+     */
+    public Horse(double x, double y, double weight, double time) {
+        super(x,y);
         this.weight = weight;
         this.time = time;
     }

@@ -6,6 +6,7 @@
  *
  * @param <N> the type of the node object
  */
+@Deprecated
 public class NodeIDTable<N>{
     static class TableEntry<T>{
         T node;  //key

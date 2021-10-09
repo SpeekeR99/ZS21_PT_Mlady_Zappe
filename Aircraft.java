@@ -11,8 +11,15 @@ public class Aircraft extends GraphNode{
     /** speed of the aircraft (velocity) */
     public double speed;
 
-    public Aircraft(MetricsDiety position, double weightCapacity, double speed) {
-        super(position);
+    /**
+     * Creates a new Aircraft object
+     * @param x the x coordinate in cartesian system, the radius in polar
+     * @param y the y coordinate in cartesian system, the angle in polar
+     * @param weightCapacity the capacity cap of the aircraft
+     * @param speed the aircraft's velocity
+     */
+    public Aircraft(double x, double y, double weightCapacity, double speed) {
+        super(x,y);
         this.weightCapacity = weightCapacity;
         this.speed = speed;
     }

@@ -1,5 +1,6 @@
 import java.util.Arrays;
 
+@Deprecated
 public abstract class AGraph<N> {
 
     /**
@@ -72,7 +73,7 @@ public abstract class AGraph<N> {
         return getDistance(nodeIDs.getId(start),nodeIDs.getId(end));
     }
 }
-
+@Deprecated
 class AdjMatrixGraph<N> extends AGraph<N>{
 
     public double[][] adjMatrix;
@@ -135,39 +136,34 @@ class AdjMatrixGraph<N> extends AGraph<N>{
     }
 }
 
-class MetricsGraph<N extends MetricsDiety> extends AGraph<N>{
-
+/**
+ * A complete undirected weighted graph with the edge weights being equal to the planar or cartesian
+ * distance of two nodes
+ */
+class MetricsGraph{
+   final GraphNode[] nodes;
+   DistFunction dist;
 
     /**
-     * Creates a graph with vertices only from the specified array of nodes
-     * the graph will use the specified <code>PathFindingAlgorithm</code> to calculate the shortest distance
-     * from all nodes to all nodes (with the ability to reconstruct the path)
-     *
-     * @param nodes     the array of the node objects
-     * @param algorithm the pathfinding algorithm to be used
+     * Creates a complete undirected weighted graph with the edge weights being equal to the planar or cartesian
+     * distance of two nodes
+     * @param nodes the array of the nodes (horses and airplanes)
      */
-    MetricsGraph(N[] nodes, PathFindingAlgorithm algorithm) {
-        super(nodes, algorithm);
+    MetricsGraph(GraphNode[] nodes, DistFunction distanceFunction) {
+            this.nodes = nodes;
+            this.dist = distanceFunction;
     }
 
-    @Override
-    IntADT getNeighbours(int node) {
-        return null;
-    }
-
-    @Override
-    void addEdge(int start, int end, double weight) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Cannot add edges to this graph!");
-    }
-
-    @Override
     void removeNode(int node) {
         nodes[node] = null;
     }
 
-    @Override
     double getWeight(int start, int end) throws NullPointerException{
-        return nodes[start].dist(nodes[end]);
+        return dist.dist(nodes[start],nodes[end]);
+    }
+
+    public int getNumOfVertices() {
+        return nodes.length;
     }
 }
 
