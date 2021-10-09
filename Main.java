@@ -35,7 +35,9 @@ class GraphTest{
     static Random r = new Random(1);
 
     public static void main(String[] args) {
-        testGraph();
+        int val = 1_051_442_000;
+        char[] a = new char[val];
+        System.out.println(val);
     }
 
     public static void testHeap(){

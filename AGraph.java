@@ -2,12 +2,18 @@ import java.util.Arrays;
 
 public abstract class AGraph<N> {
 
+    /**
+     * Table that converts a node to its ID in the graph
+     */
     NodeIDTable<N> nodeIDs;
 
     /**
      * array of the nodes
      */
     N[] nodes;
+    /**
+     * The algorithm
+     */
     PathFindingAlgorithm algo;
 
     /**
@@ -129,7 +135,7 @@ class AdjMatrixGraph<N> extends AGraph<N>{
     }
 }
 
-class PlexGraph<N> extends AGraph<N>{
+class MetricsGraph<N extends MetricsDiety> extends AGraph<N>{
 
 
     /**
@@ -140,7 +146,7 @@ class PlexGraph<N> extends AGraph<N>{
      * @param nodes     the array of the node objects
      * @param algorithm the pathfinding algorithm to be used
      */
-    PlexGraph(N[] nodes, PathFindingAlgorithm algorithm) {
+    MetricsGraph(N[] nodes, PathFindingAlgorithm algorithm) {
         super(nodes, algorithm);
     }
 
@@ -150,18 +156,18 @@ class PlexGraph<N> extends AGraph<N>{
     }
 
     @Override
-    void addEdge(int start, int end, double weight) {
-
+    void addEdge(int start, int end, double weight) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Cannot add edges to this graph!");
     }
 
     @Override
     void removeNode(int node) {
-
+        nodes[node] = null;
     }
 
     @Override
-    double getWeight(int start, int end) {
-        return 0;
+    double getWeight(int start, int end) throws NullPointerException{
+        return nodes[start].dist(nodes[end]);
     }
 }
 
