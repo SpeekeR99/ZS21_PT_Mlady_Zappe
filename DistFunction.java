@@ -15,8 +15,8 @@ class CartesianDist implements DistFunction {
 
     @Override
     public double dist(GraphNode a, GraphNode b) throws IllegalArgumentException {
-            double difX = a.x- b.x;
-            double difY = b.x-b.y;
+            double difX = a.x - b.x;
+            double difY = a.y - b.y;
             return Math.sqrt(difX*difX+difY*difY);
     }
 }
