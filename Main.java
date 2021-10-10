@@ -17,7 +17,7 @@ public class Main {
         /* input */
         ArrayList<Double> data = parser.getInput();
         /* paris X, Y location */
-        MetricsDiety paris = new CartesianDiety(data.get(0), data.get(1));
+        GraphNode paris = new GraphNode(data.get(0), data.get(1));
         /* horses and aircrafts number */
         double temp = data.get(2);
         int numberOfHorses = (int) temp;
@@ -25,14 +25,14 @@ public class Main {
         int numberOfAircrafts = (int) temp;
         /* nodes */
         GraphNode[] nodes = new GraphNode[1 + numberOfAircrafts + numberOfHorses]; // 1 + because of Paris
-        nodes[0] = new GraphNode(paris);
+        nodes[0] = paris;
         /* aircrafts input */
         for(int i = 0; i < numberOfAircrafts*4; i += 4) {
             double x = data.get(i + 4 + numberOfHorses * 4);
             double y = data.get(i + 5 + numberOfHorses * 4);
             double weightCapacity = data.get(i + 6 + numberOfHorses * 4);
             double speed = data.get(i + 7 + numberOfHorses * 4);
-            Aircraft aircraft = new Aircraft(new CartesianDiety(x, y), weightCapacity, speed);
+            Aircraft aircraft = new Aircraft(x, y, weightCapacity, speed);
             // Do something with the aircraft here | add to the graph or something
             nodes[i / 4 + 1] = aircraft;
         }
@@ -42,38 +42,38 @@ public class Main {
             double y = data.get(i + 4);
             double weight = data.get(i + 5);
             double time = data.get(i + 6);
-            Horse horse = new Horse(new CartesianDiety(x, y), weight, time);
+            Horse horse = new Horse(x, y, weight, time);
             // Do something with the horse here | add to the graph or something
             nodes[i / 4 + 1 + numberOfAircrafts] = horse;
         }
-        /* graph */
-        PathFindingAlgorithm algorithm = new ClosestNeighbourPath(0);
-        // AGraph<GraphNode> graph = new MetricsGraph<GraphNode>(nodes, algorithm); /* Tohle mi nefunguje protože nemám nic, co by dědilo MetricsDiety?? nebo nevím, jsem fakt lost */
-
         /* vypis testovaci, ze v nodes je vse jak ma byt
         * to jest - na 0 indexu je paris, hned potom jsou letadla a
         * az nakonec jsou kone (+ indexy v nodes, takze napr kun1 = index prvniho kone - pocet letadel) */
         for(int i = 0; i < nodes.length; i++) {
             if (nodes[i] instanceof Horse) {
                 System.out.println("kun " + i);
-                System.out.println(nodes[i].position + " " + ((Horse) nodes[i]).weight + " " + ((Horse) nodes[i]).time);
+                System.out.println(nodes[i].x + " " + nodes[i].y + " " + ((Horse) nodes[i]).weight + " " + ((Horse) nodes[i]).time);
             } else if (nodes[i] instanceof Aircraft) {
                 System.out.println("letadlo " + i);
-                System.out.println(nodes[i].position + " " + ((Aircraft) nodes[i]).weightCapacity + " " + ((Aircraft) nodes[i]).speed);
+                System.out.println(nodes[i].x + " " + nodes[i].y + " " + ((Aircraft) nodes[i]).weightCapacity + " " + ((Aircraft) nodes[i]).speed);
             } else {
                 System.out.println("paris " + i);
-                System.out.println(nodes[i].position);
+                System.out.println(nodes[i].x + " " + nodes[i].y);
             }
         }
-        /* tyhle nodes bych chtel nacpat do grafu, ale nevim jak */
-
-        AdjMatrixGraph<GraphNode> graph = new AdjMatrixGraph<>(nodes, algorithm);
-        graph.startAlgorithm(); /* nefunguje mi ani jedno spusteni ; nullpointer */
-        graph.algo.start(graph); /* nefunguje mi ani jedno spusteni ; nullpointer */
+        /* graph */
+        MetricsGraph graph = new MetricsGraph(nodes, new CartesianDist());
+        ClosestNeighbourPath algorithm = new ClosestNeighbourPath(1);
+        algorithm.start(graph);
+        IntQueue path = algorithm.reconstructPath(1, 3);
+        while (path.count() != 0) {
+            System.out.print(path.pop() + "   ");
+        }
     }
 
 }
 
+/*
 class GraphTest{
     static Random r = new Random(1);
 
@@ -146,3 +146,4 @@ class GraphTest{
         }
     }
 }
+ */
