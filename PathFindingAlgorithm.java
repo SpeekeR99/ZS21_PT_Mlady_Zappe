@@ -145,7 +145,7 @@ class ClosestNeighbourPath{
         }
     }
 
-    public IntQueue reconstructPath(int start, int end) throws RuntimeException {
+    public IntQueue getPath() throws RuntimeException {
         return path;
     }
 

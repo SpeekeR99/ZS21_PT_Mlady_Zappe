@@ -63,11 +63,15 @@ public class Main {
         }
         /* graph */
         MetricsGraph graph = new MetricsGraph(nodes, new CartesianDist());
-        ClosestNeighbourPath algorithm = new ClosestNeighbourPath(1);
-        algorithm.start(graph);
-        IntQueue path = algorithm.reconstructPath(1, 3);
-        while (path.count() != 0) {
-            System.out.print(path.pop() + "   ");
+        ClosestNeighbourPath algorithm = new ClosestNeighbourPath(0);
+        for(int i = 1; i <= numberOfAircrafts; i++) {
+            algorithm.setStart(i);
+            algorithm.start(graph);
+            IntQueue path = algorithm.getPath();
+            while (path.count() != 0) {
+                System.out.print(path.pop() + "   ");
+            }
+            System.out.println();
         }
     }
 
