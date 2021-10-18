@@ -5,15 +5,21 @@ import java.util.Random;
 
 public class Main {
 
+    static double velocitySum;
+    static int horsesCount;
+    static DistFunction distFunction;
+
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/tutorial.txt");
+            parser = new Parser("data/random10000.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
             return;
         }
+        velocitySum = 0.0;
+        distFunction = new CartesianDist();
         /* input */
         ArrayList<Double> data = parser.getInput();
         /* paris X, Y location */
@@ -21,6 +27,7 @@ public class Main {
         /* horses and aircrafts number */
         double temp = data.get(2);
         int numberOfHorses = (int) temp;
+        horsesCount = numberOfHorses;
         temp = data.get(3 + numberOfHorses * 4);
         int numberOfAircrafts = (int) temp;
         /* nodes */
@@ -32,6 +39,7 @@ public class Main {
             double y = data.get(i + 5 + numberOfHorses * 4);
             double weightCapacity = data.get(i + 6 + numberOfHorses * 4);
             double speed = data.get(i + 7 + numberOfHorses * 4);
+            velocitySum+=speed;
             Aircraft aircraft = new Aircraft(x, y, weightCapacity, speed);
             // Do something with the aircraft here | add to the graph or something
             nodes[i / 4 + 1] = aircraft;
@@ -61,8 +69,16 @@ public class Main {
                 System.out.println(nodes[i].x + " " + nodes[i].y);
             }
         }
+
+        int len = 0;
+        for (int i = 1; nodes[i] instanceof Aircraft ; i++) {
+            len+= getClosestHorses(nodes,numberOfAircrafts+1,(Aircraft) nodes[i]).length;
+        }
+        System.out.println("horse counts: "+len + " " + horsesCount);
+        System.out.println("graph: ");
+
         /* graph */
-        MetricsGraph graph = new MetricsGraph(nodes, new CartesianDist());
+        MetricsGraph graph = new MetricsGraph(nodes, distFunction);
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath(0);
         for(int i = 1; i <= numberOfAircrafts; i++) {
             algorithm.setStart(i);
@@ -73,6 +89,43 @@ public class Main {
             }
             System.out.println();
         }
+        System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
+    }
+
+    /**
+     * Distributes horses among planes based on their velocity.
+     * A faster airplane can take more horses. If slower planes took the same amount of horses,
+     * faster planes would be done much earlier. This will give more work to faster planes.
+     *
+     *
+     * @param velocity the current plane's velocity
+     * @return a distribution of horses to the plane based on its velocity
+     */
+    static int numOfHorsesBasedOnVelocity(double velocity){
+        return (int)Math.ceil(horsesCount*velocity/velocitySum);
+    }
+
+    /**
+     * gets the indices of Horse objects in the horses array that are the closest from the plane
+     * @param nodes array of all nodes (paris + planes + horses)
+     * @param firstHorseIndex index of the first horse in nodes array
+     * @param plane the current plane
+     * @return array of indices of the <code>horses</code> array, on which are the closest Horse objects
+     */
+    static int[] getClosestHorses(GraphNode[] nodes,int firstHorseIndex, Aircraft plane){
+        int[] indeces = new int[numOfHorsesBasedOnVelocity(plane.speed)];
+        MinHeap horseHeap = new MinHeap(horsesCount);
+        int lastHorseIndex = firstHorseIndex+horsesCount;
+
+        //calculate distance from plane to each horse
+        for (int i = firstHorseIndex; i < lastHorseIndex; i++) {
+            horseHeap.push(i, distFunction.dist(nodes[i],plane));
+        }
+        //get only that much horses, as needed for this plane
+        for (int i = 0; i < indeces.length; i++) {
+            indeces[i] = horseHeap.pop().node();
+        }
+        return indeces;
     }
 
 }
