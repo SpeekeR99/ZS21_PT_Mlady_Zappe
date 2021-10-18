@@ -97,7 +97,7 @@ class FloydWarshall implements PathFindingAlgorithm{
 
 class ClosestNeighbourPath{
 
-    MinHeap[] neighbours;
+    int[][] closest;
     boolean[] visited;
     int start;
     IntQueue path;
@@ -112,16 +112,21 @@ class ClosestNeighbourPath{
         path = new IntQueue();
         visited = new boolean[n];
         visited[start] = true;
+        closest = new int[n][];
 
-        neighbours = new MinHeap[n];
-        for (int i = 0; i < n; i++) {
-            neighbours[i] = new MinHeap(n);
-        }
+        final int NUM_OF_CLOSEST = 5;
+
+        MinHeap neighbours;
 
         //populate neighbours
         for (int i = 0; i < n; i++) {
+            neighbours = new MinHeap(n);
+            closest[i] = new int[NUM_OF_CLOSEST];
             for (int j = 0; j < n; j++) {
-                neighbours[i].push(j,graph.getWeight(i,j));
+                neighbours.push(j, graph.getWeight(i,j));
+            }
+            for (int j = 0; j < NUM_OF_CLOSEST; j++) {
+                closest[i][j] = neighbours.pop().node();
             }
         }
 
@@ -129,18 +134,26 @@ class ClosestNeighbourPath{
         int curNode = start;
         path.push(start);
         int closest;
+        int next = 0;
         int goneThrough = 1; //already "gone through" the first node
 
         //we gotta go through all nodes
         while(goneThrough<n){
-            closest = neighbours[curNode].pop().node();
+            closest = this.closest[curNode][next];
             if(visited[closest]){
-                //if already visited, it is yeeted out and not used
-                continue;
+                //if already visited, get another closest
+                next++;
+                if(next>=this.closest[curNode].length){
+                    //all closest neighbours already visited, continue to a random unvisited node
+                    for (curNode = 0; visited[curNode]; curNode++) ;
+                    closest = curNode;
+                }
+                else continue;
             }
             path.push(closest);
             visited[closest] = true;
             curNode = closest;
+            next = 0;
             ++goneThrough;
         }
     }

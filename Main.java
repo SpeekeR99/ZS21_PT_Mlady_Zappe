@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/random10000.txt");
+            parser = new Parser("data/fibonacci.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -84,6 +84,7 @@ public class Main {
             algorithm.setStart(i);
             algorithm.start(graph);
             IntQueue path = algorithm.getPath();
+            System.out.println(path.count());
             while (path.count() != 0) {
                 System.out.print(path.pop() + "   ");
             }
