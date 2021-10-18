@@ -1,4 +1,3 @@
-import java.util.Arrays;
 @Deprecated
 public interface PathFindingAlgorithm {
 
@@ -99,41 +98,48 @@ class ClosestNeighbourPath{
 
     int[][] closest;
     boolean[] visited;
-    int start;
+    final int START = MetricsGraph.PLANE_INDEX;
     IntQueue path;
-
-    public ClosestNeighbourPath(int start) {
-        this.start = start;
-    }
 
     public void start(MetricsGraph graph) {
         //----------------prep
-        int n = graph.getNumOfVertices();
+        int n = graph.getNumOfHorses();
         path = new IntQueue();
-        visited = new boolean[n];
-        visited[start] = true;
-        closest = new int[n][];
+        visited = new boolean[n]; //the index i of this array refers to the (i+2)th node in the graph array!
+        closest = new int[n][]; //the first index i of this matrix refers to the (i+2)th node in the graph array!
+        int closest = 0;
+
+        //find closest horse to plane
+        for (int i = 3; i < n; i++)
+            closest = graph.getWeight(START,closest+2) > graph.getWeight(START,i) ?
+                    i :
+                    closest;
+
 
         final int NUM_OF_CLOSEST = 5;
-
         MinHeap neighbours;
 
         //populate neighbours
         for (int i = 0; i < n; i++) {
             neighbours = new MinHeap(n);
-            closest[i] = new int[NUM_OF_CLOSEST];
+            this.closest[i] = new int[NUM_OF_CLOSEST];
             for (int j = 0; j < n; j++) {
-                neighbours.push(j, graph.getWeight(i,j));
+                if(i==j) continue;
+                neighbours.push(j, graph.getWeight(i+2,j+2));
+               /*               ↑ position in       ↑   ↑  positions in graph's node array
+               //                 this.closest
+               //                 (offset by -2)   */
             }
             for (int j = 0; j < NUM_OF_CLOSEST; j++) {
-                closest[i][j] = neighbours.pop().node();
+                this.closest[i][j] = neighbours.pop().node();
             }
         }
 
         //---------------the algorithm
-        int curNode = start;
-        path.push(start);
-        int closest;
+        //TODO: make this class only preapare the this.closest array and let something else do the following (which will include masses)
+        int curNode = closest;
+        path.push(closest+2); //+2 to get the index of the horse in the graph's node array
+        visited[closest] = true;
         int next = 0;
         int goneThrough = 1; //already "gone through" the first node
 
@@ -145,12 +151,13 @@ class ClosestNeighbourPath{
                 next++;
                 if(next>=this.closest[curNode].length){
                     //all closest neighbours already visited, continue to a random unvisited node
-                    for (curNode = 0; visited[curNode]; curNode++) ;
+                    for (curNode = 0; visited[curNode]; curNode++)
+                        ;
                     closest = curNode;
                 }
                 else continue;
             }
-            path.push(closest);
+            path.push(closest+2); //+2 to get the index of the horse in the graph's node array
             visited[closest] = true;
             curNode = closest;
             next = 0;
@@ -160,9 +167,5 @@ class ClosestNeighbourPath{
 
     public IntQueue getPath() throws RuntimeException {
         return path;
-    }
-
-    public void setStart(int start) {
-        this.start = start;
     }
 }

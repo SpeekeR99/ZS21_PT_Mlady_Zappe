@@ -141,29 +141,69 @@ class AdjMatrixGraph<N> extends AGraph<N>{
  * distance of two nodes
  */
 class MetricsGraph{
+    /**
+     * The index of paris in the graph's node array
+     */
+    public final static int PARIS_INDEX = 0,
+    /**
+     * The index of the plane in the graph's node array
+     */
+                            PLANE_INDEX = 1;
+
    final GraphNode[] nodes;
+   MinHeap parisClosest; //the priority queue of closest horses to paris
    DistFunction dist;
 
     /**
      * Creates a complete undirected weighted graph with the edge weights being equal to the planar or cartesian
      * distance of two nodes
-     * @param nodes the array of the nodes (horses and airplanes)
+     * @param horses the array of the horses
+     * @param plane the plane of this graph
+     * @param paris paris
+     * @param distanceFunction the distance function to be used
      */
-    MetricsGraph(GraphNode[] nodes, DistFunction distanceFunction) {
-            this.nodes = nodes;
-            this.dist = distanceFunction;
+    MetricsGraph(Horse[] horses, Aircraft plane, GraphNode paris, DistFunction distanceFunction) {
+        this.nodes = new GraphNode[2+horses.length]; //2 = plane + paris
+        nodes[0] = paris;
+        nodes[1] = plane;
+        System.arraycopy(horses, 0, nodes, 2, nodes.length - 2);
+        this.dist = distanceFunction;
+        parisClosest = new MinHeap(horses.length);
+
+        for (int i = 2; i < nodes.length; i++) {
+            parisClosest.push(i,getWeight(0,i));
+        }
     }
 
+    /**
+     * removes a horse from the graph
+     * might use later, dunno
+     * @param node the horse's index
+     */
     void removeNode(int node) {
         nodes[node] = null;
     }
 
+    /**
+     * Gets the distance between nodes
+     * @param start one node's index
+     * @param end second node's index
+     * @return the distance
+     * @throws NullPointerException dunno when, might happen someday
+     */
     double getWeight(int start, int end) throws NullPointerException{
-        return dist.dist(nodes[start],nodes[end]);
+        return dist.dist(nodes[start], nodes[end]);
     }
 
-    public int getNumOfVertices() {
-        return nodes.length;
+    public int getNumOfHorses() {
+        return nodes.length-2;
+    }
+
+    /**
+     * @return the next closest horse index to paris
+     */
+    public int getNextClosestToParis(){
+        return parisClosest.pop().node();
     }
 }
 

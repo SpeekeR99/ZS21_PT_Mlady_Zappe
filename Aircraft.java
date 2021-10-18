@@ -8,6 +8,7 @@ public class Aircraft extends GraphNode{
 
     /** maximum weight that the aircraft can take */
     public double weightCapacity;
+    double currCapacity;
     /** speed of the aircraft (velocity) */
     public double speed;
 
@@ -21,6 +22,7 @@ public class Aircraft extends GraphNode{
     public Aircraft(double x, double y, double weightCapacity, double speed) {
         super(x,y);
         this.weightCapacity = weightCapacity;
+        currCapacity = 0.0;
         this.speed = speed;
     }
 

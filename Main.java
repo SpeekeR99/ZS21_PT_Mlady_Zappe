@@ -1,7 +1,5 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
 public class Main {
 
@@ -12,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/fibonacci.txt");
+            parser = new Parser("data/random1000.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -25,14 +23,16 @@ public class Main {
         /* paris X, Y location */
         GraphNode paris = new GraphNode(data.get(0), data.get(1));
         /* horses and aircrafts number */
+        Aircraft[] airplanes; Horse[] horses;
         double temp = data.get(2);
         int numberOfHorses = (int) temp;
         horsesCount = numberOfHorses;
+        horses = new Horse[numberOfHorses];
+
         temp = data.get(3 + numberOfHorses * 4);
         int numberOfAircrafts = (int) temp;
-        /* nodes */
-        GraphNode[] nodes = new GraphNode[1 + numberOfAircrafts + numberOfHorses]; // 1 + because of Paris
-        nodes[0] = paris;
+        airplanes = new Aircraft[numberOfAircrafts];
+
         /* aircrafts input */
         for(int i = 0; i < numberOfAircrafts*4; i += 4) {
             double x = data.get(i + 4 + numberOfHorses * 4);
@@ -42,7 +42,7 @@ public class Main {
             velocitySum+=speed;
             Aircraft aircraft = new Aircraft(x, y, weightCapacity, speed);
             // Do something with the aircraft here | add to the graph or something
-            nodes[i / 4 + 1] = aircraft;
+            airplanes[i / 4] = aircraft;
         }
         /* horses input */
         for(int i = 0; i < numberOfHorses*4; i += 4) {
@@ -52,11 +52,15 @@ public class Main {
             double time = data.get(i + 6);
             Horse horse = new Horse(x, y, weight, time);
             // Do something with the horse here | add to the graph or something
-            nodes[i / 4 + 1 + numberOfAircrafts] = horse;
+            horses[i / 4] = horse;
         }
+
+
+
         /* vypis testovaci, ze v nodes je vse jak ma byt
         * to jest - na 0 indexu je paris, hned potom jsou letadla a
         * az nakonec jsou kone (+ indexy v nodes, takze napr kun1 = index prvniho kone - pocet letadel) */
+        /*
         for(int i = 0; i < nodes.length; i++) {
             if (nodes[i] instanceof Horse) {
                 System.out.println("kun " + i);
@@ -75,16 +79,19 @@ public class Main {
             len+= getClosestHorses(nodes,numberOfAircrafts+1,(Aircraft) nodes[i]).length;
         }
         System.out.println("horse counts: "+len + " " + horsesCount);
+        */
+
         System.out.println("graph: ");
 
         /* graph */
-        MetricsGraph graph = new MetricsGraph(nodes, distFunction);
-        ClosestNeighbourPath algorithm = new ClosestNeighbourPath(0);
-        for(int i = 1; i <= numberOfAircrafts; i++) {
-            algorithm.setStart(i);
-            algorithm.start(graph);
+        MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
+        ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
+        for(int i = 0; i < numberOfAircrafts; i++) {
+            System.out.printf("\tgraf %d: \n",i);
+            graph[i] = new MetricsGraph(horses,airplanes[i],paris, distFunction);
+
+            algorithm.start(graph[i]);
             IntQueue path = algorithm.getPath();
-            System.out.println(path.count());
             while (path.count() != 0) {
                 System.out.print(path.pop() + "   ");
             }
