@@ -199,6 +199,10 @@ class MetricsGraph{
         return nodes.length-2;
     }
 
+    public Aircraft getAirplane(){
+        return  (Aircraft) nodes[PLANE_INDEX];
+    }
+
     /**
      * @return the next closest horse index to paris
      */

@@ -26,4 +26,14 @@ public class Aircraft extends GraphNode{
         this.speed = speed;
     }
 
+    /**
+     * Updates the aircraft's position (The plane flies to a different location)
+     * @param x new x coordinate (or radius)
+     * @param y new y coordinate (or angle)
+     */
+    public void flyTo(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+
 }
