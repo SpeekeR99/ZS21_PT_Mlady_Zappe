@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Class represents generic GraphNode
  * is to be extended by Horse and Aircraft
@@ -17,5 +19,18 @@ public class GraphNode {
     public GraphNode(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GraphNode graphNode = (GraphNode) o;
+        return Double.compare(graphNode.x, x) == 0 && Double.compare(graphNode.y, y) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

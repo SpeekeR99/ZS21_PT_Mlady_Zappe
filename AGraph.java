@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 @Deprecated
 public abstract class AGraph<N> {
@@ -208,6 +210,44 @@ class MetricsGraph{
      */
     public int getNextClosestToParis(){
         return parisClosest.pop().node();
+    }
+}
+
+/**
+ * A "graph" using the TreeSet collection to quickly find the closest horse to the plane's current location
+ */
+class TreeSetGraph{
+    TreeSet<GraphNode> nodes;
+    GraphNode paris;
+    Aircraft plane;
+
+    TreeSetGraph(Horse[] horses, Aircraft plane, GraphNode paris, Comparator<GraphNode> comp) {
+        nodes = new TreeSet<>(comp);
+        for (Horse horse :horses) {
+            if(nodes.contains(horse))
+                System.out.println(horse.x + " " + horse.y);
+            nodes.add(horse);
+        }
+
+        this.plane = plane;
+        this.paris = paris;
+    }
+
+    public Horse closestToPlane(){
+        GraphNode closest = nodes.ceiling(plane);
+        if(closest==null) closest = nodes.first();
+        return (Horse) closest;
+    }
+
+    public Aircraft getPlane(){
+        return  plane;
+    }
+
+    public boolean goneThroughAll(){
+        return nodes.isEmpty();
+    }
+    public void delete(Horse h){
+        nodes.remove(h);
     }
 }
 

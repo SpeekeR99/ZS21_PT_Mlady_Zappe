@@ -1,16 +1,18 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Main {
 
     static double velocitySum;
     static int horsesCount;
     static DistFunction distFunction;
+    static Comparator<GraphNode> comparator;
 
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/random1000.txt");
+            parser = new Parser("data/tutorial.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -18,6 +20,7 @@ public class Main {
         }
         velocitySum = 0.0;
         distFunction = new CartesianDist();
+        comparator = new CartesianDistComparator();
         /* input */
         ArrayList<Double> data = parser.getInput();
         /* paris X, Y location */
@@ -51,6 +54,7 @@ public class Main {
             double weight = data.get(i + 5);
             double time = data.get(i + 6);
             Horse horse = new Horse(x, y, weight, time);
+            horse.index = i/4;
             // Do something with the horse here | add to the graph or something
             horses[i / 4] = horse;
         }
@@ -84,6 +88,7 @@ public class Main {
         System.out.println("graph: ");
 
         /* graph */
+        /*
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         for(int i = 0; i < numberOfAircrafts; i++) {
@@ -98,6 +103,22 @@ public class Main {
             System.out.println();
         }
         System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
+
+         */
+
+        ((CartesianDistComparator)comparator).setReferenceNode(paris);
+        TreeSetGraph graph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
+        Horse cur;
+        int iters = 0;
+        while(!graph.goneThroughAll()){
+            cur = graph.closestToPlane();
+            graph.getPlane().flyTo(cur.x,cur.y);
+            System.out.println(cur.index);
+            graph.delete(cur);
+            iters++;
+        }
+
+        System.out.println(iters);
     }
 
     /**
