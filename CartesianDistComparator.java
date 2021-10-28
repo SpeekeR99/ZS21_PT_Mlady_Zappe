@@ -12,7 +12,7 @@ import java.util.Comparator;
  * <strong>The reference node should be paris</strong>
  */
 public class CartesianDistComparator implements Comparator<GraphNode> {
-    GraphNode paris;
+    double refX,refY;
     double compAccuracy = .000_000_1;
 
     @Override
@@ -48,7 +48,8 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
      * @param paris the reference node
      */
     public void setReferenceNode(GraphNode paris){
-        this.paris = paris;
+        this.refX = paris.x;
+        this.refY = paris.y;
     }
 
     /**
@@ -67,7 +68,7 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
      * @return angle between point at [x,y] and paris
      */
     private double angle(double y, double x){
-        return Math.atan2(y-paris.y,x-paris.x);
+        return Math.atan2(y-refY,x-refX);
     }
 
     /**
@@ -77,7 +78,7 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
      * @return distance between point at [x,y] and paris
      */
     private double distance(double x, double y){
-        double dx = paris.x-x, dy = paris.y-y;
+        double dx = refX-x, dy = refY-y;
         return dx*dx + dy*dy;
     }
 

@@ -93,7 +93,9 @@ public class Main {
         System.out.println("graph: ");
 
         /* graph */
-        /*
+        ArrayList<Horse> horsesInOrder = new ArrayList<>();
+/*
+
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         for(int i = 0; i < numberOfAircrafts; i++) {
@@ -102,27 +104,30 @@ public class Main {
 
             algorithm.start(graph[i]);
             IntQueue path = algorithm.getPath();
+            Horse cur;
             while (path.count() != 0) {
-                System.out.print(path.pop() + "   ");
+                cur = graph[i].getHorse(path.pop());
+                System.out.print(cur.index + "   ");
+                horsesInOrder.add(cur);
             }
             System.out.println();
         }
         System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
 
-         */
+*/
 
-        ArrayList<Horse> horsesInOrder = new ArrayList<>();
+
 
         ((CartesianDistComparator)comparator).setReferenceNode(paris);
-        TreeSetGraph graph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
+        TreeSetGraph treeGraph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
         Horse cur;
         int iters = 0;
-        while(!graph.goneThroughAll()){
-            cur = graph.closestToPlane();
+        while(!treeGraph.goneThroughAll()){
+            cur = treeGraph.closestToPlane();
             horsesInOrder.add(cur);
-            graph.getPlane().flyTo(cur.x,cur.y);
+            treeGraph.getPlane().flyTo(cur.x,cur.y);
             System.out.println(cur.index);
-            graph.delete(cur);
+            treeGraph.delete(cur);
             iters++;
         }
 
