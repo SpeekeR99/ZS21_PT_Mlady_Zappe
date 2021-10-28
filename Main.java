@@ -1,8 +1,10 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.io.FileNotFoundException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
@@ -15,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/fibonacci.txt");
+            parser = new Parser("data/grid200.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -91,7 +93,9 @@ public class Main {
         System.out.println("graph: ");
 
         /* graph */
-        /*
+        ArrayList<Horse> horsesInOrder = new ArrayList<>();
+/*
+
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         for(int i = 0; i < numberOfAircrafts; i++) {
@@ -100,33 +104,38 @@ public class Main {
 
             algorithm.start(graph[i]);
             IntQueue path = algorithm.getPath();
+            Horse cur;
             while (path.count() != 0) {
-                System.out.print(path.pop() + "   ");
+                cur = graph[i].getHorse(path.pop());
+                System.out.print(cur.index + "   ");
+                horsesInOrder.add(cur);
             }
             System.out.println();
         }
         System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
 
-         */
+*/
 
-        ArrayList<Horse> horsesInOrder = new ArrayList<>();
+
 
         ((CartesianDistComparator)comparator).setReferenceNode(paris);
-        TreeSetGraph graph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
+        TreeSetGraph treeGraph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
         Horse cur;
         int iters = 0;
-        while(!graph.goneThroughAll()){
-            cur = graph.closestToPlane();
+        while(!treeGraph.goneThroughAll()){
+            cur = treeGraph.closestToPlane();
             horsesInOrder.add(cur);
-            graph.getPlane().flyTo(cur.x,cur.y);
+            treeGraph.getPlane().flyTo(cur.x,cur.y);
             System.out.println(cur.index);
-            graph.delete(cur);
+            treeGraph.delete(cur);
             iters++;
         }
 
         System.out.println(iters);
 
-        /* vizualization */
+        /* vizualizace */
+        java.util.Timer timer = new java.util.Timer();
+
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
@@ -137,14 +146,17 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        java.util.Timer tm = new Timer();
-        tm.schedule(new TimerTask() {
+        Graphics winGraph = window.getGraphics();
 
+        //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
+
+
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                panel.repaint();        // Vynuti prekresleni panelu
+                panel.drawFlight(winGraph);
             }
-        },50,50);
+        }, 0L, 10L);
     }
 
     /**

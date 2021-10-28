@@ -211,6 +211,10 @@ class MetricsGraph{
     public int getNextClosestToParis(){
         return parisClosest.pop().node();
     }
+
+    public Horse getHorse(int index){
+        return (Horse) nodes[index];
+    }
 }
 
 /**
