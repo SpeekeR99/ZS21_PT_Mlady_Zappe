@@ -1,16 +1,18 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Main {
 
     static double velocitySum;
     static int horsesCount;
     static DistFunction distFunction;
+    static Comparator<GraphNode> comparator;
 
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/grid2000.txt");
+            parser = new Parser("data/tutorial.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -18,6 +20,7 @@ public class Main {
         }
         velocitySum = 0.0;
         distFunction = new CartesianDist();
+        comparator = new CartesianDistComparator();
         /* input */
         ArrayList<Double> data = parser.getInput();
         /* paris X, Y location */
@@ -51,6 +54,7 @@ public class Main {
             double weight = data.get(i + 5);
             double time = data.get(i + 6);
             Horse horse = new Horse(x, y, weight, time);
+            horse.index = i/4;
             // Do something with the horse here | add to the graph or something
             horses[i / 4] = horse;
         }
@@ -58,8 +62,8 @@ public class Main {
 
 
         /* vypis testovaci, ze v nodes je vse jak ma byt
-         * to jest - na 0 indexu je paris, hned potom jsou letadla a
-         * az nakonec jsou kone (+ indexy v nodes, takze napr kun1 = index prvniho kone - pocet letadel) */
+        * to jest - na 0 indexu je paris, hned potom jsou letadla a
+        * az nakonec jsou kone (+ indexy v nodes, takze napr kun1 = index prvniho kone - pocet letadel) */
         /*
         for(int i = 0; i < nodes.length; i++) {
             if (nodes[i] instanceof Horse) {
@@ -73,6 +77,7 @@ public class Main {
                 System.out.println(nodes[i].x + " " + nodes[i].y);
             }
         }
+
         int len = 0;
         for (int i = 1; nodes[i] instanceof Aircraft ; i++) {
             len+= getClosestHorses(nodes,numberOfAircrafts+1,(Aircraft) nodes[i]).length;
@@ -83,6 +88,7 @@ public class Main {
         System.out.println("graph: ");
 
         /* graph */
+        /*
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         for(int i = 0; i < numberOfAircrafts; i++) {
@@ -97,6 +103,22 @@ public class Main {
             System.out.println();
         }
         System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
+
+         */
+
+        ((CartesianDistComparator)comparator).setReferenceNode(paris);
+        TreeSetGraph graph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
+        Horse cur;
+        int iters = 0;
+        while(!graph.goneThroughAll()){
+            cur = graph.closestToPlane();
+            graph.getPlane().flyTo(cur.x,cur.y);
+            System.out.println(cur.index);
+            graph.delete(cur);
+            iters++;
+        }
+
+        System.out.println(iters);
     }
 
     /**
@@ -140,11 +162,13 @@ public class Main {
 /*
 class GraphTest{
     static Random r = new Random(1);
+
     public static void main(String[] args) {
         int val = 1_051_442_000;
         char[] a = new char[val];
         System.out.println(val);
     }
+
     public static void testHeap(){
         MinHeap h = new MinHeap(10_000);
         for (int i = 0; i < h.size(); i++) {
@@ -154,26 +178,33 @@ class GraphTest{
         for (int i = 0; i < h.size(); i++) {
             p[i] = h.pop().weight;
         }
+
         for (int i = 1; i < p.length; i++) {
             if(p[i-1]>p[i]) {
                 System.out.println("NE "+i);
+
             }
         }
+
         for (double v :p) {
             System.out.println(v);
         }
     }
     public static void testGraph() {
+
         Place[] nodes = new Place[7000];
         for (int i = 0; i < nodes.length; i++) {
             nodes[i] = new Place(100*r.nextDouble(), 100*r.nextDouble());
         }
+
         AdjMatrixGraph<Place> graph = new AdjMatrixGraph<>(nodes, new ClosestNeighbourPath(0));
+
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes.length; j++) {
                 graph.addEdge(i,j,nodes[i].dist(nodes[j]));
             }
         }
+
       //  System.out.println(Arrays.deepToString(graph.adjMatrix));
         double time = System.nanoTime();
         graph.startAlgorithm();
@@ -182,13 +213,18 @@ class GraphTest{
         graph.reconstructPath(0,0).foreach(System.out::println);
         time = System.nanoTime()-time;
         System.out.println(time);
+
+
     }
+
     static class Place{
         double x,y;
+
         public Place(double x, double y) {
             this.x = x;
             this.y = y;
         }
+
         public double dist(Place b){
             double difX = this.x-b.x;
             double difY = this.y-b.y;

@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Class represents a horse
  * Horse has some position - x , y
@@ -10,6 +12,8 @@ public class Horse extends GraphNode {
     public double weight;
     /** time taken to get onboard / off the aircraft */
     public double time;
+    /** the horse's index **/
+    public int index;
 
     /**
      * Creates a new Horse object
@@ -24,4 +28,13 @@ public class Horse extends GraphNode {
         this.time = time;
     }
 
+    @Override
+    public boolean equals(Object o) {
+       return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
