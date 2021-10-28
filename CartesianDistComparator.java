@@ -19,12 +19,14 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
     public int compare(GraphNode o1, GraphNode o2) {
         int ret;
         double angleDif = angle(o1.y,o1.x) - angle(o2.y,o2.x);
+        double distDif = distance(o1.x,o1.y) - distance(o2.x,o2.y);
+
         if(Math.abs(angleDif)>compAccuracy){
                 ret =  angleDif>0? 1 : -1;
         }
         else{
                 //angles are basically the same, so order them by distances to paris
-                double distDif = distance(o1.x,o1.y) - distance(o2.x,o2.y);
+
 
                 if(Math.abs(distDif)>compAccuracy){
                     ret =  distDif>0 ? 1 : -1;

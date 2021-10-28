@@ -11,6 +11,7 @@ public class DrawingPanel extends JPanel {
     ArrayList<Horse> horsesInOrder;
     double minX, maxX, minY, maxY;
     double relativeX, relativeY;
+    int curHorseIndex;
 
     public DrawingPanel(ArrayList<Horse> horsesInOrder) {
         int width = 1000;
@@ -19,6 +20,7 @@ public class DrawingPanel extends JPanel {
         this.horsesInOrder = horsesInOrder;
         calculateMinMaxes();
         setRelatives(width, height);
+        curHorseIndex = 0;
     }
 
     @Override
@@ -28,23 +30,32 @@ public class DrawingPanel extends JPanel {
         g2.setStroke(new BasicStroke(1));
         g2.setFont(new Font("Times New Roman", Font.PLAIN, 21));
         g2.drawString("START", (float)(horsesInOrder.get(0).x - minX * relativeX), (float)(horsesInOrder.get(0).y - minY * relativeY));
+    }
+
+    public void drawFlight(Graphics g){
+        Graphics2D g2 = (Graphics2D)g;
+
         g2.setColor(Color.RED);
-        for(int i = 0; i < horsesInOrder.size() - 1; i++) {
-            Horse cur = horsesInOrder.get(i);
-            Horse next = horsesInOrder.get(i + 1);
-            Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
-            g2.draw(line);
-            System.out.println(cur.index + " | x = " + cur.x + " y = " + cur.y);
-        }
+
+        curHorseIndex++;
+        if(curHorseIndex>=horsesInOrder.size()-1)
+            return;
+
+
+        Horse cur = horsesInOrder.get(curHorseIndex);
+        Horse next = horsesInOrder.get(curHorseIndex + 1);
+        Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
+        g2.draw(line);
+        System.out.println(cur.index + " | x = " + cur.x + " y = " + cur.y);
+
         g2.setColor(Color.BLACK);
-        g2.drawString("START", (float)(horsesInOrder.get(0).x - minX * relativeX), (float)(horsesInOrder.get(0).y - minY * relativeY));
     }
 
     private void calculateMinMaxes() {
         minX = Double.MAX_VALUE;
         minY = Double.MAX_VALUE;
-        maxX = Double.MIN_VALUE;
-        maxY = Double.MIN_VALUE;
+        maxX = -Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
         for (Horse h : horsesInOrder) {
             if (h.x > maxX) maxX = h.x;
             if (h.x < minX) minX = h.x;

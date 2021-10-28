@@ -1,7 +1,11 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.io.FileNotFoundException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.TimerTask;
 
 public class Main {
 
@@ -13,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/fibonacci.txt");
+            parser = new Parser("data/grid200.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -125,6 +129,8 @@ public class Main {
         System.out.println(iters);
 
         /* vizualizace */
+        java.util.Timer timer = new java.util.Timer();
+
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
@@ -134,6 +140,18 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        Graphics winGraph = window.getGraphics();
+
+        //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
+
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                panel.drawFlight(winGraph);
+            }
+        }, 0L, 10L);
     }
 
     /**
