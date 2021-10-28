@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main {
 
@@ -124,7 +126,7 @@ public class Main {
 
         System.out.println(iters);
 
-        /* vizualizace */
+        /* vizualization */
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
@@ -134,6 +136,15 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        java.util.Timer tm = new Timer();
+        tm.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                panel.repaint();        // Vynuti prekresleni panelu
+            }
+        },50,50);
     }
 
     /**
