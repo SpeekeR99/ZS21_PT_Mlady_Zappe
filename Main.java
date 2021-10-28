@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/tutorial.txt");
+            parser = new Parser("data/fibonacci.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -106,12 +107,15 @@ public class Main {
 
          */
 
+        ArrayList<Horse> horsesInOrder = new ArrayList<>();
+
         ((CartesianDistComparator)comparator).setReferenceNode(paris);
         TreeSetGraph graph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
         Horse cur;
         int iters = 0;
         while(!graph.goneThroughAll()){
             cur = graph.closestToPlane();
+            horsesInOrder.add(cur);
             graph.getPlane().flyTo(cur.x,cur.y);
             System.out.println(cur.index);
             graph.delete(cur);
@@ -119,6 +123,17 @@ public class Main {
         }
 
         System.out.println(iters);
+
+        /* vizualizace */
+        JFrame window = new JFrame();
+        window.setTitle("Visuals");
+        window.setSize(1000, 1000);
+        DrawingPanel panel = new DrawingPanel(horsesInOrder);
+        window.add(panel);
+        window.pack();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
     }
 
     /**
