@@ -116,7 +116,7 @@ public class FlightSimulator {
                     nodesInOrder.add(graphs[i].getHorse(closest));
                 }
 
-                System.out.println(formatOutput(event, (int)curTime,i,curHorse,(int)departure,next));
+                System.out.println(formatOutput(event, (long)curTime,i,curHorse,(long)departure,next));
 
 
                 notDone = true;
@@ -125,25 +125,19 @@ public class FlightSimulator {
         }
     }
 
-    private String formatOutput(FlightState event,int curTime, int planeIndex, int curHorse, int departure, int next) {
-        switch (event){
-            case Start -> {
-                return String.format(event.pat,curTime,planeIndex,curHorse,next);
-            }
-            case Naklad_A_Dalsi -> {
-                return String.format(event.pat,curTime,planeIndex,curHorse,departure,next);
-            }
-            case Naklad_A_Francie -> {
-                return String.format(event.pat,curTime,planeIndex,curHorse,departure);
-            }
-            case Francie_A_Dalsi -> {
-                return String.format(event.pat,curTime,planeIndex,departure,next);
-            }
-            case Konec -> {
-                return String.format(event.pat,curTime,planeIndex,departure);
-            }
-        }
-        return null;
+    private String formatOutput(FlightState event,long curTime, int planeIndex, int curHorse, long departure, int next) {
+       return switch (event){
+            case Start ->  String.format(event.pat,curTime,planeIndex,curHorse,next);
+
+            case Naklad_A_Dalsi ->  String.format(event.pat,curTime,planeIndex,curHorse,departure,next);
+
+            case Naklad_A_Francie ->  String.format(event.pat,curTime,planeIndex,curHorse,departure);
+
+            case Francie_A_Dalsi ->  String.format(event.pat,curTime,planeIndex,departure,next);
+
+            case Konec ->  String.format(event.pat,curTime,planeIndex,departure);
+
+        };
     }
 }
 

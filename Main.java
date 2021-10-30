@@ -104,7 +104,7 @@ public class Main {
             graph[i] = new MetricsGraph(horses,airplanes[i],paris,distFunction);
         }
         */
-        graph[0] = new MetricsGraph(horses,airplanes[2],paris,distFunction);
+        graph[0] = new MetricsGraph(horses,airplanes[0],paris,distFunction);
         FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
         sim.simulate(nodesInOrder);
 
@@ -131,7 +131,7 @@ public class Main {
 */
 /*      TREE_SET
 
-        ((CartesianDistComparator)comparator).setReferenceNode(paris);
+        ((CartesianDistComparator)comparator).setReferenceNode(new GraphNode(0,0));
         TreeSetGraph treeGraph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
         Horse cur;
         int iters = 0;
@@ -168,9 +168,9 @@ public class Main {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                panel.drawFlight(winGraph);
+                if(panel.drawFlight(winGraph)) timer.cancel();
             }
-        }, 0L, 1L);
+        }, 0L, 5L);
     }
 
     /**

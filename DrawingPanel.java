@@ -34,14 +34,19 @@ public class DrawingPanel extends JPanel {
         g2.drawString("START", (float)(nodesInOrder.get(0).x - minX * relativeX), (float)(nodesInOrder.get(0).y - minY * relativeY));
     }
 
-    public void drawFlight(Graphics g){
+    /**
+     * Draws line between representing a flight
+     * @param g the graphics context
+     * @return true, if al flights are drawn, else returns false
+     */
+    public boolean drawFlight(Graphics g){
         Graphics2D g2 = (Graphics2D)g;
 
         g2.setColor(Color.RED);
 
         curHorseIndex++;
         if(curHorseIndex>= nodesInOrder.size()-1)
-            return;
+            return true;
 
 
         GraphNode cur = nodesInOrder.get(curHorseIndex);
@@ -52,6 +57,8 @@ public class DrawingPanel extends JPanel {
             System.out.println((cur instanceof Horse ?  ((Horse)cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
 
         g2.setColor(Color.BLACK);
+
+        return false;
     }
 
     private void calculateMinMaxes() {
