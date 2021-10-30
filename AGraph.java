@@ -155,6 +155,10 @@ class MetricsGraph{
    final GraphNode[] nodes;
    MinHeap parisClosest; //the priority queue of closest horses to paris
    DistFunction dist;
+   boolean[] visited;
+   int visitedNum, currentlyAt;
+   IntQueue loaded;
+   double time;
 
     /**
      * Creates a complete undirected weighted graph with the edge weights being equal to the planar or cartesian
@@ -175,19 +179,18 @@ class MetricsGraph{
         for (int i = 2; i < nodes.length; i++) {
             parisClosest.push(i,getWeight(0,i));
         }
-    }
 
-    /**
-     * removes a horse from the graph
-     * might use later, dunno
-     * @param node the horse's index
-     */
-    void removeNode(int node) {
-        nodes[node] = null;
+        visited = new boolean[horses.length+2];
+        visited[0] = visited[1] = true; //plane and paris "already visited"
+        loaded = new IntQueue();
+        visitedNum = 0;
+        currentlyAt = PLANE_INDEX;
+        time = 0.0;
     }
 
     /**
      * Gets the distance between nodes
+     * Note that horses start at index = 2!
      * @param start one node's index
      * @param end second node's index
      * @return the distance
@@ -204,6 +207,9 @@ class MetricsGraph{
     public Aircraft getAirplane(){
         return  (Aircraft) nodes[PLANE_INDEX];
     }
+    public GraphNode getParis(){
+        return nodes[PARIS_INDEX];
+    }
 
     /**
      * @return the next closest horse index to paris
@@ -213,7 +219,91 @@ class MetricsGraph{
     }
 
     public Horse getHorse(int index){
+        //index+=2; //Horses start at index 2
         return (Horse) nodes[index];
+    }
+
+    public boolean isVisited(int i){
+        return visited[i];
+    }
+
+    /**
+     * Returns whether all horses are visited
+     * @return true if all horses are visited, else return false
+     */
+    public boolean allVisited(){
+        return visitedNum==getNumOfHorses();
+    }
+
+    /**
+     * @return true, if the plane is currently at a horse's location
+     */
+    public boolean atHorse(){
+        return currentlyAt>=2; //plane is at horse
+    }
+    /**
+     * @return true, if the plane is currently in paris
+     */
+    public boolean atParis(){
+        return currentlyAt == PARIS_INDEX;
+    }
+    /**
+     * @return true, if the plane is at its starting position
+     */
+    public boolean atStart(){
+        return currentlyAt == PLANE_INDEX;
+    }
+    public double getTime(){
+        return time;
+    }
+    /**
+     * @return the index of the node the plane is currently at
+     */
+    public int getCurrentlyAt(){
+        return currentlyAt;
+    }
+
+    /**
+     * Unloads all horses in Paris and for all loaded horses, increases the time
+     * This method does not fly the plane to paris!
+     */
+    public void unloadInParis(){
+        while(loaded.count()>0){
+            time += getHorse(loaded.pop()).time;
+        }
+        getAirplane().unload();
+    }
+    /**
+     * Loads a single horse and increases the time
+     * @param i horse index
+     */
+    public void load(int i){
+        if(getAirplane().loadHorse(getHorse(i).weight)) {
+            loaded.push(i);
+            time += getHorse(i).time;
+        }
+    }
+    /**
+     * Flies the plane to the node and increases the time according to the speed and distance
+     * also marks the node as visited and updates the currentlyAt position to the node index
+     * @param i the node to fly to
+     * @throws IllegalArgumentException when i == PLANE_INDEX
+     */
+    public void flyTo(int i){
+        if(i==PLANE_INDEX) throw new IllegalArgumentException("Plane cannot fly to itself");
+        time += timeFromVelAndDist(getAirplane().speed,getWeight(PLANE_INDEX,i));
+        getAirplane().flyTo(nodes[i].x,nodes[i].y);
+        visit(i);
+        currentlyAt = i;
+    }
+
+    private void visit(int i){
+        if(visited[i]) return;
+        visited[i] = true;
+        visitedNum++;
+    }
+    private double timeFromVelAndDist(double velocity, double dist){
+        return dist/velocity;
     }
 }
 

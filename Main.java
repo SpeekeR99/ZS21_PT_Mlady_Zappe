@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/grid200.txt");
+            parser = new Parser("data/random10000.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
@@ -93,15 +93,29 @@ public class Main {
         System.out.println("graph: ");
 
         /* graph */
-        ArrayList<Horse> horsesInOrder = new ArrayList<>();
-/*
+        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
+
+        numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
+
+        MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
+        ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
+        /*
+        for (int i = 0; i < numberOfAircrafts; i++) {
+            graph[i] = new MetricsGraph(horses,airplanes[i],paris,distFunction);
+        }
+        */
+        graph[0] = new MetricsGraph(horses,airplanes[2],paris,distFunction);
+        FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
+        sim.simulate(nodesInOrder);
+
+/*      OLD PATH FINDING
 
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         for(int i = 0; i < numberOfAircrafts; i++) {
             System.out.printf("\tgraf %d: \n",i);
             graph[i] = new MetricsGraph(horses,airplanes[i],paris, distFunction);
-
+            System.out.println("\tgraf done, starting algorithm");
             algorithm.start(graph[i]);
             IntQueue path = algorithm.getPath();
             Horse cur;
@@ -115,8 +129,7 @@ public class Main {
         System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
 
 */
-
-
+/*      TREE_SET
 
         ((CartesianDistComparator)comparator).setReferenceNode(paris);
         TreeSetGraph treeGraph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
@@ -132,6 +145,7 @@ public class Main {
         }
 
         System.out.println(iters);
+*/
 
         /* vizualizace */
         java.util.Timer timer = new java.util.Timer();
@@ -139,7 +153,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
-        DrawingPanel panel = new DrawingPanel(horsesInOrder);
+        DrawingPanel panel = new DrawingPanel(nodesInOrder,false);
         window.add(panel);
         window.pack();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -156,7 +170,7 @@ public class Main {
             public void run() {
                 panel.drawFlight(winGraph);
             }
-        }, 0L, 10L);
+        }, 0L, 1L);
     }
 
     /**

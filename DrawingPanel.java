@@ -8,19 +8,21 @@ import java.util.ArrayList;
  */
 public class DrawingPanel extends JPanel {
 
-    ArrayList<Horse> horsesInOrder;
+    ArrayList<GraphNode> nodesInOrder;
     double minX, maxX, minY, maxY;
     double relativeX, relativeY;
     int curHorseIndex;
+    final boolean print;
 
-    public DrawingPanel(ArrayList<Horse> horsesInOrder) {
+    public DrawingPanel(ArrayList<GraphNode> horsesInOrder, boolean print) {
         int width = 1000;
         int height = 1000;
         this.setPreferredSize(new Dimension(width, height));
-        this.horsesInOrder = horsesInOrder;
+        this.nodesInOrder = horsesInOrder;
         calculateMinMaxes();
         setRelatives(width, height);
         curHorseIndex = 0;
+        this.print = print;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class DrawingPanel extends JPanel {
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(1));
         g2.setFont(new Font("Times New Roman", Font.PLAIN, 21));
-        g2.drawString("START", (float)(horsesInOrder.get(0).x - minX * relativeX), (float)(horsesInOrder.get(0).y - minY * relativeY));
+        g2.drawString("START", (float)(nodesInOrder.get(0).x - minX * relativeX), (float)(nodesInOrder.get(0).y - minY * relativeY));
     }
 
     public void drawFlight(Graphics g){
@@ -38,15 +40,16 @@ public class DrawingPanel extends JPanel {
         g2.setColor(Color.RED);
 
         curHorseIndex++;
-        if(curHorseIndex>=horsesInOrder.size()-1)
+        if(curHorseIndex>= nodesInOrder.size()-1)
             return;
 
 
-        Horse cur = horsesInOrder.get(curHorseIndex);
-        Horse next = horsesInOrder.get(curHorseIndex + 1);
+        GraphNode cur = nodesInOrder.get(curHorseIndex);
+        GraphNode next = nodesInOrder.get(curHorseIndex + 1);
         Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
         g2.draw(line);
-        System.out.println(cur.index + " | x = " + cur.x + " y = " + cur.y);
+        if(print)
+            System.out.println((cur instanceof Horse ?  ((Horse)cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
 
         g2.setColor(Color.BLACK);
     }
@@ -56,12 +59,13 @@ public class DrawingPanel extends JPanel {
         minY = Double.MAX_VALUE;
         maxX = -Double.MAX_VALUE;
         maxY = -Double.MAX_VALUE;
-        for (Horse h : horsesInOrder) {
+        for (GraphNode h : nodesInOrder) {
             if (h.x > maxX) maxX = h.x;
             if (h.x < minX) minX = h.x;
             if (h.y > maxY) maxY = h.y;
             if (h.y < minY) minY = h.y;
         }
+        if(!print) return;
         System.out.println("minX = " + minX);
         System.out.println("maxX = " + maxX);
         System.out.println("minY = " + minY);
@@ -73,6 +77,7 @@ public class DrawingPanel extends JPanel {
         double height = maxY - minY;
         relativeX = thiswidth / width;
         relativeY = thisheight / height;
+        if(!print) return;
         System.out.println("relativeX = " + relativeX);
         System.out.println("relativeY = " + relativeY);
     }

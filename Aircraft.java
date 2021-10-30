@@ -36,4 +36,26 @@ public class Aircraft extends GraphNode{
         this.y = y;
     }
 
+    /**
+     * Plane tries to load a horse. If the plane can load the horse (current weight + added weight <= capacity),
+     * the plane loads it. Otherwise, it doesn't.
+     * @param weight the weight of the horse
+     * @return true, if successfully loaded, false otherwise
+     * @throws RuntimeException when the current capacity + weight > maximum capacity
+     */
+    public boolean loadHorse(double weight){
+        double w = currCapacity+weight;
+        if(w>weightCapacity) throw new RuntimeException("Aircraft tried to overload itself");
+        currCapacity = w;
+        return true;
+    }
+
+    public boolean canLoadHorse(double weight){
+        return currCapacity+weight <= weightCapacity;
+    }
+
+    public void unload(){
+        currCapacity = 0;
+    }
+
 }
