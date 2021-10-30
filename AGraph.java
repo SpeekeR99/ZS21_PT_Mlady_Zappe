@@ -151,13 +151,38 @@ class MetricsGraph{
      * The index of the plane in the graph's node array
      */
                             PLANE_INDEX = 1;
-
+    /**
+     * All the nodes: Paris, Plane and horses
+      */
    final GraphNode[] nodes;
+    /**
+     * Priority Queue for closest horses to paris
+     */
    MinHeap parisClosest; //the priority queue of closest horses to paris
+    /**
+     * The function used to calculate the distance
+     */
    DistFunction dist;
+    /**
+     * Array for keeping track of already visited nodes
+     */
    boolean[] visited;
-   int visitedNum, currentlyAt;
+    /**
+     * How many horses already visited
+     */
+   int visitedNum,
+    /**
+     * Index of the node the Airplane is currently at<br>
+     * can be: Horse Index, Paris index (0) or Plane index (1) at the beginning
+     */
+            currentlyAt;
+    /**
+     * The Queue of horse indices, that are currently on the plane
+      */
    IntQueue loaded;
+    /**
+     * The current time
+     */
    double time;
 
     /**
@@ -190,7 +215,7 @@ class MetricsGraph{
 
     /**
      * Gets the distance between nodes
-     * Note that horses start at index = 2!
+     * Note that horses start at index = 2! (excl. mark not factorial)
      * @param start one node's index
      * @param end second node's index
      * @return the distance
@@ -215,9 +240,19 @@ class MetricsGraph{
      * @return the next closest horse index to paris
      */
     public int getNextClosestToParis(){
-        return parisClosest.pop().node();
+        int closest;
+        do{
+            closest = parisClosest.pop().node();
+        }while(visited[closest]);
+        return closest;
     }
 
+    /**
+     * Returns the horse at the given index<br>
+     * note that horses start at index = 2<br>
+     * @param index index of the horse
+     * @return horse at the given index
+     */
     public Horse getHorse(int index){
         //index+=2; //Horses start at index 2
         return (Horse) nodes[index];
@@ -288,20 +323,34 @@ class MetricsGraph{
      * also marks the node as visited and updates the currentlyAt position to the node index
      * @param i the node to fly to
      * @throws IllegalArgumentException when i == PLANE_INDEX
+     * @throws RuntimeException when flying to a horse already visited
      */
     public void flyTo(int i){
         if(i==PLANE_INDEX) throw new IllegalArgumentException("Plane cannot fly to itself");
+        if(i>=2 && visited[i]) throw new RuntimeException("Flying to a horse already visited");
+
         time += timeFromVelAndDist(getAirplane().speed,getWeight(PLANE_INDEX,i));
         getAirplane().flyTo(nodes[i].x,nodes[i].y);
         visit(i);
         currentlyAt = i;
     }
 
+    /**
+     * If the node is not already visited:<br>
+     * marks the node as visited and increases the number of visited nodes
+     * @param i node
+     */
     private void visit(int i){
         if(visited[i]) return;
         visited[i] = true;
         visitedNum++;
     }
+    /**
+     * A simple function to calculate the time knowing the velocity and distance
+     * @param velocity the velocity
+     * @param dist the distance
+     * @return the time: time = distance/velocity
+     */
     private double timeFromVelAndDist(double velocity, double dist){
         return dist/velocity;
     }

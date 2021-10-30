@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         Parser parser;
         try {
-            parser = new Parser("data/random10000.txt");
+            parser = new Parser("data/fibonacci.txt");
         } catch (FileNotFoundException e) {
             System.out.println("Chyba při načítání souboru:");
             e.printStackTrace();
