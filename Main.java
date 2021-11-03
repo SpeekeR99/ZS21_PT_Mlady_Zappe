@@ -84,6 +84,37 @@ public class Main {
     }
 
     /**
+     * Basic primitive visualization of airplane's flight
+     * @param nodesInOrder nodes in order of simulation
+     * @param visualization true if window should open up, false otherwise
+     */
+    private static void visulize(ArrayList<GraphNode> nodesInOrder, boolean visualization) {
+        if (!visualization) return;
+        java.util.Timer timer = new java.util.Timer();
+
+        JFrame window = new JFrame();
+        window.setTitle("Visuals");
+        window.setSize(1000, 1000);
+        DrawingPanel panel = new DrawingPanel(nodesInOrder,false);
+        window.add(panel);
+        window.pack();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        Graphics winGraph = window.getGraphics();
+
+        //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(panel.drawFlight(winGraph)) timer.cancel();
+            }
+        }, 0L, 5L);
+    }
+
+    /**
      * Entry point, start the app
      * @param args arguments from cmd
      *             Expecting first argument to be filepath to input file
@@ -126,29 +157,7 @@ public class Main {
         sim.simulate(nodesInOrder);
 
         // visualization
-        if (!visualization) return;
-        java.util.Timer timer = new java.util.Timer();
-
-        JFrame window = new JFrame();
-        window.setTitle("Visuals");
-        window.setSize(1000, 1000);
-        DrawingPanel panel = new DrawingPanel(nodesInOrder,false);
-        window.add(panel);
-        window.pack();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-
-        Graphics winGraph = window.getGraphics();
-
-        //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if(panel.drawFlight(winGraph)) timer.cancel();
-            }
-        }, 0L, 5L);
+        visulize(nodesInOrder, visualization);
 
 
 /////////////////// WORKING CODE ENDS HERE /////////////////////////////////////////////////////////////////////////////
