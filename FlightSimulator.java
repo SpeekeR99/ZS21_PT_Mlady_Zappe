@@ -116,7 +116,7 @@ public class FlightSimulator {
                     nodesInOrder.add(graphs[i].getHorse(closest));
                 }
 
-                System.out.println(formatOutput(event, (long)curTime,i,curHorse,(long)departure,next));
+                System.out.println(formatOutput(event, Math.round(curTime),i,curHorse,Math.round(departure),next));
 
 
                 notDone = true;

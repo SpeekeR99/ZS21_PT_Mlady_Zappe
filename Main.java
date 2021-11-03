@@ -21,7 +21,7 @@ public class Main {
     private static Parser createParser(String[] args) {
         String filepath;
         if (args.length != 0) filepath = args[0];
-        else filepath = "data/pi4.txt";
+        else filepath = "data/pi6.txt";
 
         Parser parser;
         try {
@@ -155,6 +155,7 @@ public class Main {
         graph[0] = new MetricsGraph(horses,airplanes[0],paris,distFunction);
         FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
         sim.simulate(nodesInOrder);
+        System.out.printf("Celkem prepraveno %d koni.",graph[0].getNumOfHorses());
 
         // visualization
         visulize(nodesInOrder, visualization);
@@ -186,7 +187,6 @@ public class Main {
         }
         System.out.println("horse counts: "+len + " " + horsesCount);
         */
-
 /*      OLD PATH FINDING
 
         MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
