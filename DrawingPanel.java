@@ -14,11 +14,11 @@ public class DrawingPanel extends JPanel {
     int curHorseIndex;
     final boolean print;
 
-    public DrawingPanel(ArrayList<GraphNode> horsesInOrder, boolean print) {
+    public DrawingPanel(ArrayList<GraphNode> nodesInOrder, boolean print) {
         int width = 1000;
         int height = 1000;
         this.setPreferredSize(new Dimension(width, height));
-        this.nodesInOrder = horsesInOrder;
+        this.nodesInOrder = nodesInOrder;
         calculateMinMaxes();
         setRelatives(width, height);
         curHorseIndex = 0;
@@ -48,7 +48,6 @@ public class DrawingPanel extends JPanel {
         if(curHorseIndex>= nodesInOrder.size()-1)
             return true;
 
-
         GraphNode cur = nodesInOrder.get(curHorseIndex);
         GraphNode next = nodesInOrder.get(curHorseIndex + 1);
         Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
@@ -56,16 +55,17 @@ public class DrawingPanel extends JPanel {
         if(print)
             System.out.println((cur instanceof Horse ?  ((Horse)cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
 
-        g2.setColor(Color.BLACK);
-
         return false;
     }
 
+    /**
+     * Calculates minimum and maximum values for drawing into small windows
+     */
     private void calculateMinMaxes() {
         minX = Double.MAX_VALUE;
         minY = Double.MAX_VALUE;
-        maxX = -Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
+        maxX = Double.MIN_VALUE;
+        maxY = Double.MIN_VALUE;
         for (GraphNode h : nodesInOrder) {
             if (h.x > maxX) maxX = h.x;
             if (h.x < minX) minX = h.x;
@@ -79,6 +79,12 @@ public class DrawingPanel extends JPanel {
         System.out.println("maxY = " + maxY);
     }
 
+    /**
+     * Relative X and Y are just ratio's between the width and height of actual map and the small window
+     * so the drawing would fit in the window
+     * @param thiswidth width of window
+     * @param thisheight height of window
+     */
     private void setRelatives(int thiswidth, int thisheight) {
         double width = maxX - minX;
         double height = maxY - minY;
