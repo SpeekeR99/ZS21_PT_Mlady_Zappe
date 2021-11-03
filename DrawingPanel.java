@@ -64,8 +64,8 @@ public class DrawingPanel extends JPanel {
     private void calculateMinMaxes() {
         minX = Double.MAX_VALUE;
         minY = Double.MAX_VALUE;
-        maxX = Double.MIN_VALUE;
-        maxY = Double.MIN_VALUE;
+        maxX = -Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
         for (GraphNode h : nodesInOrder) {
             if (h.x > maxX) maxX = h.x;
             if (h.x < minX) minX = h.x;

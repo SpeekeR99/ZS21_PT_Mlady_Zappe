@@ -21,7 +21,7 @@ public class Main {
     private static Parser createParser(String[] args) {
         String filepath;
         if (args.length != 0) filepath = args[0];
-        else filepath = "data/pi6.txt";
+        else filepath = "data/pi4.txt";
 
         Parser parser;
         try {
