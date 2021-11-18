@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TimerTask;
 
 public class Main {
@@ -21,7 +22,7 @@ public class Main {
     private static Parser createParser(String[] args) {
         String filepath;
         if (args.length != 0) filepath = args[0];
-        else filepath = "data/pi4.txt";
+        else filepath = "data/random10000.txt";
 
         Parser parser;
         try {
@@ -57,6 +58,8 @@ public class Main {
 
         return horses;
     }
+
+
 
     /**
      * Creates array of Aircrafts, then fills the array with corresponding data
@@ -135,17 +138,27 @@ public class Main {
         double temp = data.get(2);
         int numberOfHorses = (int) temp;
         Horse[] horses = fillHorses(data, numberOfHorses);
+        ArrayList<Horse> horsesList = fillHorsesList(data,numberOfHorses);
 
         // aircrafts
         temp = data.get(3 + numberOfHorses * 4);
         int numberOfAircrafts = (int) temp;
         Aircraft[] airplanes = fillAirplanes(data, numberOfAircrafts, numberOfHorses);
 
-        numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
+        //sort planes by speed
+        Arrays.sort(airplanes, (a,b) -> {
+            double epsilon = 1e-7;
+            return Math.abs(a.speed - b.speed) < epsilon ? 0 : (int)(a.speed - b.speed);
+        });
+
+        //numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
 
         // graph
-        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
         MetricsGraph[] graph = new MetricsGraph[numberOfAircrafts];
+
+        graph = assignHorsesToAirplanes(airplanes,horsesList, distFunction,paris);
+
+        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
         /*
         for (int i = 0; i < numberOfAircrafts; i++) {
@@ -163,92 +176,94 @@ public class Main {
 
 /////////////////// WORKING CODE ENDS HERE /////////////////////////////////////////////////////////////////////////////
 
-
-        /* vypis testovaci, ze v nodes je vse jak ma byt
-        * to jest - na 0 indexu je paris, hned potom jsou letadla a
-        * az nakonec jsou kone (+ indexy v nodes, takze napr kun1 = index prvniho kone - pocet letadel) */
-        /*
-        for(int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof Horse) {
-                System.out.println("kun " + i);
-                System.out.println(nodes[i].x + " " + nodes[i].y + " " + ((Horse) nodes[i]).weight + " " + ((Horse) nodes[i]).time);
-            } else if (nodes[i] instanceof Aircraft) {
-                System.out.println("letadlo " + i);
-                System.out.println(nodes[i].x + " " + nodes[i].y + " " + ((Aircraft) nodes[i]).weightCapacity + " " + ((Aircraft) nodes[i]).speed);
-            } else {
-                System.out.println("paris " + i);
-                System.out.println(nodes[i].x + " " + nodes[i].y);
-            }
-        }
-
-        int len = 0;
-        for (int i = 1; nodes[i] instanceof Aircraft ; i++) {
-            len+= getClosestHorses(nodes,numberOfAircrafts+1,(Aircraft) nodes[i]).length;
-        }
-        System.out.println("horse counts: "+len + " " + horsesCount);
-        */
-/*      OLD PATH FINDING
-
-        MetricsGraph graph[] = new MetricsGraph[numberOfAircrafts];
-        ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
-        for(int i = 0; i < numberOfAircrafts; i++) {
-            System.out.printf("\tgraf %d: \n",i);
-            graph[i] = new MetricsGraph(horses,airplanes[i],paris, distFunction);
-            System.out.println("\tgraf done, starting algorithm");
-            algorithm.start(graph[i]);
-            IntQueue path = algorithm.getPath();
-            Horse cur;
-            while (path.count() != 0) {
-                cur = graph[i].getHorse(path.pop());
-                System.out.print(cur.index + "   ");
-                horsesInOrder.add(cur);
-            }
-            System.out.println();
-        }
-        System.out.printf("%s %f %d",distFunction.getClass().getSimpleName(),velocitySum,horsesCount);
-
-*/
-/*      TREE_SET
-
-       Comparator<GraphNode> comparator = new CartesianDistComparator();
-        ((CartesianDistComparator)comparator).setReferenceNode(new GraphNode(0,0));
-        TreeSetGraph treeGraph = new TreeSetGraph(horses,airplanes[0],paris,comparator);
-        Horse cur;
-        int iters = 0;
-        while(!treeGraph.goneThroughAll()){
-            cur = treeGraph.closestToPlane();
-            horsesInOrder.add(cur);
-            treeGraph.getPlane().flyTo(cur.x,cur.y);
-            System.out.println(cur.index);
-            treeGraph.delete(cur);
-            iters++;
-        }
-
-        System.out.println(iters);
-*/
     }
 
     /**
-     * gets the indices of Horse objects in the horses array that are the closest from the plane
-     * @param nodes array of all nodes (paris + planes + horses)
-     * @param firstHorseIndex index of the first horse in nodes array
+     * Creates a graph for each plane that holds the closest horses
+     * the number of the horses is derived by each plane's speed
+     * in other words, returns division of horses assigned to airplanes wrapped in graphs
+     *
+     * This method clears the horsesList list!
+     *
+     * @param airplanes the array of all airplanes
+     * @param horsesList the list of all horses (Will contain nothing after this method is done)
+     * @param fun the distance function used by all graphs
+     * @param paris paris
+     * @return array of MetricsGraphs which act like division of horses assigned to an airplane
+     */
+    private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, ArrayList<Horse> horsesList, DistFunction fun, GraphNode paris) {
+        MetricsGraph graphs[] = new MetricsGraph[airplanes.length];
+        int[] horseIndices; ArrayList<Horse> horses;
+
+        for (int i = 0; i < airplanes.length-1; i++) {
+            horses = new ArrayList<>();
+            horseIndices = getClosestHorses(horsesList,airplanes[i]);
+
+            for (int index : horseIndices)
+                horses.add(horsesList.get(index));
+
+            //so that we dont get the same horse twice
+            for (int index : horseIndices)
+                horsesList.remove(index);
+
+            graphs[i] = new MetricsGraph(horses.toArray(Horse[]::new),airplanes[i],paris,distFunction);
+        }
+        //to the last plane, assign the rest of the horses
+        //last plane should be the fastest
+        graphs[airplanes.length-1] = new MetricsGraph(horsesList.toArray(Horse[]::new),airplanes[airplanes.length-1],paris,distFunction);
+        horsesList.clear();
+        return graphs;
+    }
+
+
+    /**
+     * Creates array list of Horses, then fills the list with corresponding data
+     * based on input file (X, Y, Weight and Time attributes of horses)
+     * @param data input data from file
+     * @param numberOfHorses the number of horses that are present
+     * @return array list of horses based on input file
+     */
+    private static ArrayList<Horse> fillHorsesList(ArrayList<Double> data, int numberOfHorses) {
+        ArrayList<Horse> horses = new ArrayList<>();
+
+        for(int i = 0; i < numberOfHorses*4; i += 4) {
+            double x = data.get(i + 3);
+            double y = data.get(i + 4);
+            double weight = data.get(i + 5);
+            double time = data.get(i + 6);
+            Horse horse = new Horse(x, y, weight, time);
+            horse.index = i/4;
+            // Do something with the horse here | add to the graph or something
+            horses.add(horse);
+        }
+
+        return horses;
+    }
+
+    /**
+     * gets the indices of Horse objects in the horses list that are the closest from the plane
+     * based on its speed
+     * @param nodes array list of all yet unassigned horses
      * @param plane the current plane
-     * @param numberOfHorses total number of all horses
      * @return array of indices of the <code>horses</code> array, on which are the closest Horse objects
      */
-    private static int[] getClosestHorses(GraphNode[] nodes, int firstHorseIndex, Aircraft plane, int numberOfHorses) {
+    private static int[] getClosestHorses(ArrayList<Horse> nodes, Aircraft plane) {
+        int numberOfHorses = nodes.size();
+        //calculate how much horses to assign to this plane
         int[] indeces = new int[numOfHorsesBasedOnVelocity(plane.speed, numberOfHorses)];
         MinHeap horseHeap = new MinHeap(numberOfHorses);
-        int lastHorseIndex = firstHorseIndex+numberOfHorses;
 
         //calculate distance from plane to each horse
-        for (int i = firstHorseIndex; i < lastHorseIndex; i++) {
-            horseHeap.push(i, distFunction.dist(nodes[i],plane));
+        int i = 0;
+        for (Horse h : nodes) {
+            horseHeap.push(i, distFunction.dist(h,plane));
+            i++;
         }
         //get only that much horses, as needed for this plane
-        for (int i = 0; i < indeces.length; i++) {
+        for (i = 0; i < indeces.length; i++) {
             indeces[i] = horseHeap.pop().node();
         }
+
         return indeces;
     }
 
@@ -266,78 +281,3 @@ public class Main {
     }
 
 }
-
-/*
-class GraphTest{
-    static Random r = new Random(1);
-
-    public static void main(String[] args) {
-        int val = 1_051_442_000;
-        char[] a = new char[val];
-        System.out.println(val);
-    }
-
-    public static void testHeap(){
-        MinHeap h = new MinHeap(10_000);
-        for (int i = 0; i < h.size(); i++) {
-            h.push(i,r.nextDouble());
-        }
-        double[] p = new double[h.size()];
-        for (int i = 0; i < h.size(); i++) {
-            p[i] = h.pop().weight;
-        }
-
-        for (int i = 1; i < p.length; i++) {
-            if(p[i-1]>p[i]) {
-                System.out.println("NE "+i);
-
-            }
-        }
-
-        for (double v :p) {
-            System.out.println(v);
-        }
-    }
-    public static void testGraph() {
-
-        Place[] nodes = new Place[7000];
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i] = new Place(100*r.nextDouble(), 100*r.nextDouble());
-        }
-
-        AdjMatrixGraph<Place> graph = new AdjMatrixGraph<>(nodes, new ClosestNeighbourPath(0));
-
-        for (int i = 0; i < nodes.length; i++) {
-            for (int j = 0; j < nodes.length; j++) {
-                graph.addEdge(i,j,nodes[i].dist(nodes[j]));
-            }
-        }
-
-      //  System.out.println(Arrays.deepToString(graph.adjMatrix));
-        double time = System.nanoTime();
-        graph.startAlgorithm();
-        time = System.nanoTime()-time;
-        System.out.println(time/1000000);
-        graph.reconstructPath(0,0).foreach(System.out::println);
-        time = System.nanoTime()-time;
-        System.out.println(time);
-
-
-    }
-
-    static class Place{
-        double x,y;
-
-        public Place(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double dist(Place b){
-            double difX = this.x-b.x;
-            double difY = this.y-b.y;
-            return Math.sqrt(difX*difX+difY*difY);
-        }
-    }
-}
- */

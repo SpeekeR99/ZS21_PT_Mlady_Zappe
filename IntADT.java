@@ -21,43 +21,6 @@ public interface IntADT{
      */
     void foreach(IntConsumer action);
 }
-@Deprecated
-class IntStack implements IntADT{
-
-    private IntADTEntry head;
-    private int count = 0;
-
-    @Override
-    public void push(int i){
-        head = new IntADTEntry(i, head);
-        count++;
-    }
-    @Override
-    public int pop(){
-        int r = head.val;
-        head = head.next;
-        count--;
-        return r;
-    }
-
-    @Override
-    public int count() {
-        return count;
-    }
-
-    /**
-     * Performs the action on all of the ADT's elements
-     * @param action the action to perform (as a lambda expression)
-     */
-    @Override
-    public void foreach(IntConsumer action){
-        IntADTEntry cur = head;
-        for (int i = 0; i < count; i++) {
-            action.accept(cur.val);
-            cur = cur.next;
-        }
-    }
-}
 class IntQueue implements IntADT{
     private IntADTEntry head;
     private IntADTEntry tail;

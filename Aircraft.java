@@ -58,4 +58,13 @@ public class Aircraft extends GraphNode{
         currCapacity = 0;
     }
 
+    /**
+     * for testing purposes
+     */
+    @Override
+    public String toString() {
+        return "Aircraft{" +
+                "speed=" + speed +
+                '}';
+    }
 }
