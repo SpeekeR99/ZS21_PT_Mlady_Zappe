@@ -12,54 +12,64 @@ import java.util.Comparator;
  * <strong>The reference node should be paris</strong>
  */
 public class CartesianDistComparator implements Comparator<GraphNode> {
-    double refX,refY;
+    /**
+     * reference X
+     */
+    double refX;
+    /**
+     * reference Y
+     */
+    double refY;
+    /**
+     * Accuracy
+     */
     double compAccuracy = .000_000_1;
 
     @Override
     public int compare(GraphNode o1, GraphNode o2) {
         int ret;
-        double angleDif = angle(o1.y,o1.x) - angle(o2.y,o2.x);
-        double distDif = distance(o1.x,o1.y) - distance(o2.x,o2.y);
+        double angleDif = angle(o1.y, o1.x) - angle(o2.y, o2.x);
+        double distDif = distance(o1.x, o1.y) - distance(o2.x, o2.y);
 
-        if(Math.abs(angleDif)>compAccuracy){
-                ret =  angleDif>0? 1 : -1;
+        if (Math.abs(angleDif) > compAccuracy) {
+            ret = angleDif > 0 ? 1 : -1;
+        } else {
+            //angles are basically the same, so order them by distances to paris
+
+
+            if (Math.abs(distDif) > compAccuracy) {
+                ret = distDif > 0 ? 1 : -1;
+            } else {
+                //nodes are basically the same
+                ret = 0;
+            }
         }
-        else{
-                //angles are basically the same, so order them by distances to paris
-
-
-                if(Math.abs(distDif)>compAccuracy){
-                    ret =  distDif>0 ? 1 : -1;
-                }
-                else{
-                    //nodes are basically the same
-                    ret =  0;
-                }
-        }
-        if(o1 instanceof Horse && o2 instanceof Horse && ret == 0) {
+        if (o1 instanceof Horse && o2 instanceof Horse && ret == 0) {
             ret = ((Horse) o1).index - ((Horse) o2).index;
         }
 
-       return ret;
+        return ret;
 
     }
 
     /**
      * sets the reference node (should be paris)
+     *
      * @param paris the reference node
      */
-    public void setReferenceNode(GraphNode paris){
+    public void setReferenceNode(GraphNode paris) {
         this.refX = paris.x;
         this.refY = paris.y;
     }
 
     /**
      * sets the accuracy when comparing two floating points<br>
-     * <code>Math.abs(double1 - double2) < accuracy</code><br>
+     * <code>Math.abs(double1 - double2) is less than accuracy</code><br>
      * default: .0000001
+     *
      * @param accuracy .
      */
-    public void setAccuracy(double accuracy){
+    public void setAccuracy(double accuracy) {
         compAccuracy = accuracy;
     }
 
@@ -68,19 +78,18 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
      * @param x .
      * @return angle between point at [x,y] and paris
      */
-    private double angle(double y, double x){
-        return Math.atan2(y-refY,x-refX);
+    private double angle(double y, double x) {
+        return Math.atan2(y - refY, x - refX);
     }
 
     /**
-     *
      * @param x .
      * @param y .
      * @return distance between point at [x,y] and paris
      */
-    private double distance(double x, double y){
-        double dx = refX-x, dy = refY-y;
-        return dx*dx + dy*dy;
+    private double distance(double x, double y) {
+        double dx = refX - x, dy = refY - y;
+        return dx * dx + dy * dy;
     }
 
 }

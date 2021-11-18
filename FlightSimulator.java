@@ -5,15 +5,24 @@ import java.util.AbstractList;
  */
 public class FlightSimulator {
 
-    /** static instance */
+    /**
+     * static instance
+     */
     private static final FlightSimulator SIM = new FlightSimulator();
-    /** private constructor */
-    private FlightSimulator(){}
+
+    /**
+     * private constructor
+     */
+    private FlightSimulator() {
+    }
 
     /**
      * All the "subspaces" - each for one plane
      */
     MetricsGraph[] graphs;
+    /**
+     * Finished
+     */
     boolean[] graphFinished;
     /**
      * The algorithm for calculating the closest nodes
@@ -22,13 +31,13 @@ public class FlightSimulator {
 
     /**
      * Getter for FlightSimulator instance
-     * @param graphs Graphs
+     *
+     * @param graphs    Graphs
      * @param algorithm Algorithm
      * @return instance of FlightSimulator class
      */
     public static FlightSimulator getSimulator(
-            MetricsGraph[] graphs, ClosestNeighbourPath algorithm)
-    {
+            MetricsGraph[] graphs, ClosestNeighbourPath algorithm) {
         SIM.reset();
         SIM.graphs = graphs;
         SIM.algorithm = algorithm;
@@ -40,7 +49,7 @@ public class FlightSimulator {
     /**
      * Resets the simulator
      */
-    private void reset(){
+    private void reset() {
         graphs = null;
         algorithm = null;
         graphFinished = null;
@@ -48,9 +57,10 @@ public class FlightSimulator {
 
     /**
      * Runs the simulation
+     *
      * @param nodesInOrder ArrayList to be filled in for visualization
      */
-    public void simulate(AbstractList<GraphNode> nodesInOrder){
+    public void simulate(AbstractList<GraphNode> nodesInOrder) {
         int PARIS = MetricsGraph.PARIS_INDEX;
         // Unused and causing PMD troubles :)
 //        int PLANE = MetricsGraph.PLANE_INDEX, HORSE_OFFSET = 2;
@@ -63,15 +73,15 @@ public class FlightSimulator {
 
         boolean notDone = true;
 
-        while(notDone){
+        while (notDone) {
             notDone = false;
 
             for (int i = 0; i < graphs.length; i++) {
-                if(graphFinished[i]) {
+                if (graphFinished[i]) {
                     continue;
                 }
 
-                if(graphs[i].atHorse()){
+                if (graphs[i].atHorse()) {
                     curTime = graphs[i].getTime();
                     curHorse = graphs[i].getCurrentlyAt();
                     graphs[i].load(curHorse);
@@ -79,7 +89,7 @@ public class FlightSimulator {
 
                     closest = algorithm.findNextClosestHorse(graphs[i]);
 
-                    if(closest==-1){
+                    if (closest == -1) {
                         //in process and full ->
                         //fly to unload in Paris
                         event = FlightState.Naklad_A_Francie;
@@ -87,8 +97,7 @@ public class FlightSimulator {
                         graphs[i].flyTo(PARIS);
 
                         nodesInOrder.add(graphs[i].getParis());
-                    }
-                    else{
+                    } else {
                         //in process and can load moar ->
                         //fly to the next one
                         event = FlightState.Naklad_A_Dalsi;
@@ -100,20 +109,18 @@ public class FlightSimulator {
 
                     curHorse = graphs[i].getHorse(curHorse).index;
 
-                }
-                else if(graphs[i].atParis()){
+                } else if (graphs[i].atParis()) {
                     curTime = graphs[i].getTime();
                     curHorse = graphs[i].getCurrentlyAt(); //should be Paris
                     graphs[i].unloadInParis();
                     departure = graphs[i].getTime(); //method above updated the time
 
-                    if(graphs[i].allVisited()){
+                    if (graphs[i].allVisited()) {
                         //finished
                         event = FlightState.Konec;
                         next = -1;
                         graphFinished[i] = true;
-                    }
-                    else{
+                    } else {
                         //stopped in France to unload
                         //-> fly to next closest horse
                         event = FlightState.Francie_A_Dalsi;
@@ -122,17 +129,16 @@ public class FlightSimulator {
 
                         nodesInOrder.add(graphs[i].getHorse(next));
                     }
-                }
-                else if(graphs[i].atStart()){
+                } else if (graphs[i].atStart()) {
                     //at start -> only fly to a horse
                     closest = algorithm.findNextClosestHorse(graphs[i]);
 
                     event = FlightState.Start;
                     curTime = graphs[i].getTime();
-                    curHorse = (int)graphs[i].getAirplane().x; //using curHorse and next variables to store planes position
-                    next = (int)graphs[i].getAirplane().y;
+                    curHorse = (int) graphs[i].getAirplane().x; //using curHorse and next variables to store planes position
+                    next = (int) graphs[i].getAirplane().y;
 
-                    if(closest == -1){
+                    if (closest == -1) {
                         //no horses in graph, the airplane does not have to fly at all
                         graphFinished[i] = true;
                         continue;
@@ -143,9 +149,9 @@ public class FlightSimulator {
                     nodesInOrder.add(graphs[i].getHorse(closest));
                 }
 
-              //  if(curHorse_isHorseIndex) curHorse = graphs[i].getHorse(curHorse).index;
+                //  if(curHorse_isHorseIndex) curHorse = graphs[i].getHorse(curHorse).index;
 
-                System.out.println(formatOutput(event, Math.round(curTime),i,curHorse,Math.round(departure),next));
+                System.out.println(formatOutput(event, Math.round(curTime), i, curHorse, Math.round(departure), next));
 
 
                 notDone = true;
@@ -156,25 +162,26 @@ public class FlightSimulator {
 
     /**
      * Formatted output into console
-     * @param event event
-     * @param curTime current time
+     *
+     * @param event      event
+     * @param curTime    current time
      * @param planeIndex index of airplane
-     * @param curHorse current horse
-     * @param departure departure
-     * @param next next
+     * @param curHorse   current horse
+     * @param departure  departure
+     * @param next       next
      * @return formatted string
      */
-    private String formatOutput(FlightState event,long curTime, int planeIndex, int curHorse, long departure, int next) {
-       return switch (event){
-            case Start ->  String.format(event.pat,curTime,planeIndex,curHorse,next);
+    private String formatOutput(FlightState event, long curTime, int planeIndex, int curHorse, long departure, int next) {
+        return switch (event) {
+            case Start -> String.format(event.pat, curTime, planeIndex, curHorse, next);
 
-            case Naklad_A_Dalsi ->  String.format(event.pat,curTime,planeIndex,curHorse,departure,next);
+            case Naklad_A_Dalsi -> String.format(event.pat, curTime, planeIndex, curHorse, departure, next);
 
-            case Naklad_A_Francie ->  String.format(event.pat,curTime,planeIndex,curHorse,departure);
+            case Naklad_A_Francie -> String.format(event.pat, curTime, planeIndex, curHorse, departure);
 
-            case Francie_A_Dalsi ->  String.format(event.pat,curTime,planeIndex,departure,next);
+            case Francie_A_Dalsi -> String.format(event.pat, curTime, planeIndex, departure, next);
 
-            case Konec ->  String.format(event.pat,curTime,planeIndex,departure);
+            case Konec -> String.format(event.pat, curTime, planeIndex, departure);
 
         };
     }
@@ -183,18 +190,36 @@ public class FlightSimulator {
 /**
  * Enum of possible formatted outputs
  */
-enum FlightState{
+enum FlightState {
+    /**
+     * start
+     */
     Start("Cas: %d, Letoun: %d, Start z mista: %d, %d"),
+    /**
+     * taking horse and going to next horse
+     */
     Naklad_A_Dalsi("Cas: %d, Letoun: %d, Naklad kone: %d, Odlet v: %d, Let ke koni: %d"),
+    /**
+     * taking horse and going to paris
+     */
     Naklad_A_Francie("Cas: %d, Letoun: %d, Naklad kone: %d, Odlet v: %d, Let do Francie"),
+    /**
+     * goign from paris to horse
+     */
     Francie_A_Dalsi("Cas: %d, Letoun: %d, Pristani ve Francii, Odlet v: %d, Let ke koni: %d"),
+    /**
+     * end
+     */
     Konec("Cas: %d, Letoun: %d, Pristani ve Francii, Vylozeno v: %d");
 
-    /** pattern */
+    /**
+     * pattern
+     */
     public final String pat;
 
     /**
      * Constructor sets the pattern
+     *
      * @param pat pattern
      */
     FlightState(String pat) {

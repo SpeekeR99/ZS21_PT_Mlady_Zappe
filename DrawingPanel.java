@@ -8,29 +8,48 @@ import java.util.AbstractList;
  */
 public class DrawingPanel extends JPanel {
 
-    /** Horses in order of being picked up */
+    /**
+     * Horses in order of being picked up
+     */
     AbstractList<GraphNode> nodesInOrder;
-    /** Minimal value of X */
+    /**
+     * Minimal value of X
+     */
     double minX;
-    /** Maximal value of X */
+    /**
+     * Maximal value of X
+     */
     double maxX;
-    /** Minimal value of Y */
+    /**
+     * Minimal value of Y
+     */
     double minY;
-    /** Maximal value of Y */
+    /**
+     * Maximal value of Y
+     */
     double maxY;
-    /** Ratio of map X and screen window size X */
+    /**
+     * Ratio of map X and screen window size X
+     */
     double relativeX;
-    /** Ratio of map Y and screen window size Y */
+    /**
+     * Ratio of map Y and screen window size Y
+     */
     double relativeY;
-    /** Index of current horse */
+    /**
+     * Index of current horse
+     */
     int curHorseIndex;
-    /** If being verbose in console is wanted or not */
+    /**
+     * If being verbose in console is wanted or not
+     */
     final boolean print;
 
     /**
      * Constructor sets needed values
+     *
      * @param nodesInOrder Horses in order of being picked up
-     * @param print if being verbose is wanted
+     * @param print        if being verbose is wanted
      */
     public DrawingPanel(AbstractList<GraphNode> nodesInOrder, boolean print) {
         int width = 1000;
@@ -46,24 +65,25 @@ public class DrawingPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(1));
         g2.setFont(new Font("Times New Roman", Font.PLAIN, 21));
-        g2.drawString("START", (float)(nodesInOrder.get(0).x - minX * relativeX), (float)(nodesInOrder.get(0).y - minY * relativeY));
+        g2.drawString("START", (float) (nodesInOrder.get(0).x - minX * relativeX), (float) (nodesInOrder.get(0).y - minY * relativeY));
     }
 
     /**
      * Draws line between representing a flight
+     *
      * @param g the graphics context
      * @return true, if al flights are drawn, else returns false
      */
-    public boolean drawFlight(Graphics g){
-        Graphics2D g2 = (Graphics2D)g;
+    public boolean drawFlight(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
 
         g2.setColor(Color.RED);
 
         curHorseIndex++;
-        if(curHorseIndex>= nodesInOrder.size()-1) {
+        if (curHorseIndex >= nodesInOrder.size() - 1) {
             return true;
         }
 
@@ -71,7 +91,7 @@ public class DrawingPanel extends JPanel {
         GraphNode next = nodesInOrder.get(curHorseIndex + 1);
         Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
         g2.draw(line);
-        if(print) {
+        if (print) {
             System.out.println((cur instanceof Horse ? ((Horse) cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
         }
 
@@ -100,7 +120,7 @@ public class DrawingPanel extends JPanel {
                 minY = h.y;
             }
         }
-        if(!print) {
+        if (!print) {
             return;
         }
         System.out.println("minX = " + minX);
@@ -112,7 +132,8 @@ public class DrawingPanel extends JPanel {
     /**
      * Relative X and Y are just ratio's between the width and height of actual map and the small window
      * so the drawing would fit in the window
-     * @param thiswidth width of window
+     *
+     * @param thiswidth  width of window
      * @param thisheight height of window
      */
     private void setRelatives(int thiswidth, int thisheight) {
@@ -120,7 +141,7 @@ public class DrawingPanel extends JPanel {
         double height = maxY - minY;
         relativeX = thiswidth / width;
         relativeY = thisheight / height;
-        if(!print) {
+        if (!print) {
             return;
         }
         System.out.println("relativeX = " + relativeX);
