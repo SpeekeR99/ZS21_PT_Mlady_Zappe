@@ -30,11 +30,22 @@ public class Horse extends GraphNode {
 
     @Override
     public boolean equals(Object o) {
-       return super.equals(o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Horse horse = (Horse) o;
+        return index == horse.index;
     }
 
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Horse{" +
+                "index=" + index +
+                '}';
     }
 }

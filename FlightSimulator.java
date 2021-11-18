@@ -80,6 +80,8 @@ public class FlightSimulator {
                         nodesInOrder.add(graphs[i].getHorse(next));
                     }
 
+                    curHorse = graphs[i].getHorse(curHorse).index;
+
                 }
                 else if(graphs[i].atParis()){
                     curTime = graphs[i].getTime();
@@ -111,10 +113,19 @@ public class FlightSimulator {
                     curTime = graphs[i].getTime();
                     curHorse = (int)graphs[i].getAirplane().x; //using curHorse and next variables to store planes position
                     next = (int)graphs[i].getAirplane().y;
+
+                    if(closest == -1){
+                        //no horses in graph, the airplane does not have to fly at all
+                        graphFinished[i] = true;
+                        continue;
+                    }
+
                     graphs[i].flyTo(closest);
 
                     nodesInOrder.add(graphs[i].getHorse(closest));
                 }
+
+              //  if(curHorse_isHorseIndex) curHorse = graphs[i].getHorse(curHorse).index;
 
                 System.out.println(formatOutput(event, Math.round(curTime),i,curHorse,Math.round(departure),next));
 

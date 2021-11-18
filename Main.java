@@ -12,6 +12,8 @@ public class Main {
     /** dist function represents cartesian or polar calculation of distance */
     private static DistFunction distFunction;
 
+    private static int NUMBER_OF_HORSES;
+
     /**
      * Creates instance of class Parser based on args
      * if arguments exist, it takes the first argument as filepath
@@ -136,8 +138,8 @@ public class Main {
 
         // horses
         double temp = data.get(2);
-        int numberOfHorses = (int) temp;
-        Horse[] horses = fillHorses(data, numberOfHorses);
+        int numberOfHorses = NUMBER_OF_HORSES = (int) temp;
+       // Horse[] horses = fillHorses(data, numberOfHorses);
         ArrayList<Horse> horsesList = fillHorsesList(data,numberOfHorses);
 
         // aircrafts
@@ -154,21 +156,17 @@ public class Main {
         //numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
 
         // graph
-        MetricsGraph[] graph = new MetricsGraph[numberOfAircrafts];
+        MetricsGraph[] graph;
 
-        graph = assignHorsesToAirplanes(airplanes,horsesList, distFunction,paris);
+        graph = assignHorsesToAirplanes(airplanes,horsesList, paris);
+        horsesList = null; //the method above emptied the List, setting to null to avoid mem leak
 
         ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
-        /*
-        for (int i = 0; i < numberOfAircrafts; i++) {
-            graph[i] = new MetricsGraph(horses,airplanes[i],paris,distFunction);
-        }
-        */
-        graph[0] = new MetricsGraph(horses,airplanes[0],paris,distFunction);
+
         FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
         sim.simulate(nodesInOrder);
-        System.out.printf("Celkem prepraveno %d koni.",graph[0].getNumOfHorses());
+        System.out.printf("Celkem prepraveno %d koni.",numberOfHorses);
 
         // visualization
         visulize(nodesInOrder, visualization);
@@ -177,44 +175,6 @@ public class Main {
 /////////////////// WORKING CODE ENDS HERE /////////////////////////////////////////////////////////////////////////////
 
     }
-
-    /**
-     * Creates a graph for each plane that holds the closest horses
-     * the number of the horses is derived by each plane's speed
-     * in other words, returns division of horses assigned to airplanes wrapped in graphs
-     *
-     * This method clears the horsesList list!
-     *
-     * @param airplanes the array of all airplanes
-     * @param horsesList the list of all horses (Will contain nothing after this method is done)
-     * @param fun the distance function used by all graphs
-     * @param paris paris
-     * @return array of MetricsGraphs which act like division of horses assigned to an airplane
-     */
-    private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, ArrayList<Horse> horsesList, DistFunction fun, GraphNode paris) {
-        MetricsGraph graphs[] = new MetricsGraph[airplanes.length];
-        int[] horseIndices; ArrayList<Horse> horses;
-
-        for (int i = 0; i < airplanes.length-1; i++) {
-            horses = new ArrayList<>();
-            horseIndices = getClosestHorses(horsesList,airplanes[i]);
-
-            for (int index : horseIndices)
-                horses.add(horsesList.get(index));
-
-            //so that we dont get the same horse twice
-            for (int index : horseIndices)
-                horsesList.remove(index);
-
-            graphs[i] = new MetricsGraph(horses.toArray(Horse[]::new),airplanes[i],paris,distFunction);
-        }
-        //to the last plane, assign the rest of the horses
-        //last plane should be the fastest
-        graphs[airplanes.length-1] = new MetricsGraph(horsesList.toArray(Horse[]::new),airplanes[airplanes.length-1],paris,distFunction);
-        horsesList.clear();
-        return graphs;
-    }
-
 
     /**
      * Creates array list of Horses, then fills the list with corresponding data
@@ -241,6 +201,42 @@ public class Main {
     }
 
     /**
+     * Creates a graph for each plane that holds the closest horses
+     * the number of the horses is derived by each plane's speed
+     * in other words, returns division of horses assigned to airplanes wrapped in graphs
+     *
+     * This method clears the horsesList list!
+     *
+     * @param airplanes the array of all airplanes
+     * @param horsesList the list of all horses (Will contain nothing after this method is done)
+     * @param paris paris
+     * @return array of MetricsGraphs which act like division of horses assigned to an airplane
+     */
+    private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, ArrayList<Horse> horsesList, GraphNode paris) {
+        MetricsGraph graphs[] = new MetricsGraph[airplanes.length];
+        int[] horseIndices; ArrayList<Horse> horses;
+
+        for (int i = 0; i < airplanes.length-1; i++) {
+            horses = new ArrayList<>();
+            horseIndices = getClosestHorses(horsesList,airplanes[i]);
+
+            for (int index : horseIndices)
+                horses.add(horsesList.get(index));
+
+            //so that we dont get the same horse twice
+            for(Horse h : horses)
+                horsesList.remove(h);
+
+            graphs[i] = new MetricsGraph(horses.toArray(Horse[]::new),airplanes[i],paris,distFunction);
+        }
+        //to the last plane, assign the rest of the horses
+        //last plane should be the fastest
+        graphs[airplanes.length-1] = new MetricsGraph(horsesList.toArray(Horse[]::new),airplanes[airplanes.length-1],paris,distFunction);
+        horsesList.clear();
+        return graphs;
+    }
+
+    /**
      * gets the indices of Horse objects in the horses list that are the closest from the plane
      * based on its speed
      * @param nodes array list of all yet unassigned horses
@@ -248,10 +244,10 @@ public class Main {
      * @return array of indices of the <code>horses</code> array, on which are the closest Horse objects
      */
     private static int[] getClosestHorses(ArrayList<Horse> nodes, Aircraft plane) {
-        int numberOfHorses = nodes.size();
+        int numberOfUnassignedHorses = nodes.size();
         //calculate how much horses to assign to this plane
-        int[] indeces = new int[numOfHorsesBasedOnVelocity(plane.speed, numberOfHorses)];
-        MinHeap horseHeap = new MinHeap(numberOfHorses);
+        int[] indeces = new int[numOfHorsesBasedOnVelocity(plane.speed)];
+        MinHeap horseHeap = new MinHeap(numberOfUnassignedHorses);
 
         //calculate distance from plane to each horse
         int i = 0;
@@ -273,11 +269,10 @@ public class Main {
      * faster planes would be done much earlier. This will give more work to faster planes.
      *
      * @param velocity the current plane's velocity
-     * @param numberOfHorses total number of all horses
      * @return a distribution of horses to the plane based on its velocity
      */
-    private static int numOfHorsesBasedOnVelocity(double velocity, int numberOfHorses) {
-        return (int)Math.ceil(numberOfHorses*velocity/velocitySum);
+    private static int numOfHorsesBasedOnVelocity(double velocity) {
+        return (int)(NUMBER_OF_HORSES*velocity/velocitySum);
     }
 
 }
