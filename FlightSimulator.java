@@ -1,12 +1,13 @@
-import java.util.ArrayList;
+import java.util.AbstractList;
 
 /**
  * This singleton class handles the whole simulation
  */
 public class FlightSimulator {
 
-    //singleton
+    /** static instance */
     private static final FlightSimulator SIM = new FlightSimulator();
+    /** private constructor */
     private FlightSimulator(){}
 
     /**
@@ -19,6 +20,12 @@ public class FlightSimulator {
      */
     ClosestNeighbourPath algorithm;
 
+    /**
+     * Getter for FlightSimulator instance
+     * @param graphs Graphs
+     * @param algorithm Algorithm
+     * @return instance of FlightSimulator class
+     */
     public static FlightSimulator getSimulator(
             MetricsGraph[] graphs, ClosestNeighbourPath algorithm)
     {
@@ -30,14 +37,23 @@ public class FlightSimulator {
         return SIM;
     }
 
+    /**
+     * Resets the simulator
+     */
     private void reset(){
         graphs = null;
         algorithm = null;
         graphFinished = null;
     }
 
-    public void simulate(ArrayList<GraphNode> nodesInOrder){
-        int PLANE = MetricsGraph.PLANE_INDEX, PARIS = MetricsGraph.PARIS_INDEX, HORSE_OFFSET = 2;
+    /**
+     * Runs the simulation
+     * @param nodesInOrder ArrayList to be filled in for visualization
+     */
+    public void simulate(AbstractList<GraphNode> nodesInOrder){
+        int PARIS = MetricsGraph.PARIS_INDEX;
+        // Unused and causing PMD troubles :)
+//        int PLANE = MetricsGraph.PLANE_INDEX, HORSE_OFFSET = 2;
 
         //the state variables of graphs
         FlightState event = FlightState.Start; //indicates what happens now and next
@@ -51,7 +67,9 @@ public class FlightSimulator {
             notDone = false;
 
             for (int i = 0; i < graphs.length; i++) {
-                if(graphFinished[i]) continue;
+                if(graphFinished[i]) {
+                    continue;
+                }
 
                 if(graphs[i].atHorse()){
                     curTime = graphs[i].getTime();
@@ -136,6 +154,16 @@ public class FlightSimulator {
         }
     }
 
+    /**
+     * Formatted output into console
+     * @param event event
+     * @param curTime current time
+     * @param planeIndex index of airplane
+     * @param curHorse current horse
+     * @param departure departure
+     * @param next next
+     * @return formatted string
+     */
     private String formatOutput(FlightState event,long curTime, int planeIndex, int curHorse, long departure, int next) {
        return switch (event){
             case Start ->  String.format(event.pat,curTime,planeIndex,curHorse,next);
@@ -152,6 +180,9 @@ public class FlightSimulator {
     }
 }
 
+/**
+ * Enum of possible formatted outputs
+ */
 enum FlightState{
     Start("Cas: %d, Letoun: %d, Start z mista: %d, %d"),
     Naklad_A_Dalsi("Cas: %d, Letoun: %d, Naklad kone: %d, Odlet v: %d, Let ke koni: %d"),
@@ -159,9 +190,13 @@ enum FlightState{
     Francie_A_Dalsi("Cas: %d, Letoun: %d, Pristani ve Francii, Odlet v: %d, Let ke koni: %d"),
     Konec("Cas: %d, Letoun: %d, Pristani ve Francii, Vylozeno v: %d");
 
-
+    /** pattern */
     public final String pat;
 
+    /**
+     * Constructor sets the pattern
+     * @param pat pattern
+     */
     FlightState(String pat) {
         this.pat = pat;
     }

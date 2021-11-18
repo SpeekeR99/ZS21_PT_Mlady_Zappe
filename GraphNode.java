@@ -23,8 +23,12 @@ public class GraphNode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GraphNode graphNode = (GraphNode) o;
         return Double.compare(graphNode.x, x) == 0 && Double.compare(graphNode.y, y) == 0;
     }

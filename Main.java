@@ -1,17 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TimerTask;
 
+/**
+ * Main class, entry point of the app
+ * Parses the input data, then uses them to create
+ * graph structures and simulate flights
+ * Outputs the results into console
+ */
 public class Main {
 
     /** sum of velocity */
     private static double velocitySum;
     /** dist function represents cartesian or polar calculation of distance */
     private static DistFunction distFunction;
-
+    /** number of horses */
     private static int NUMBER_OF_HORSES;
 
     /**
@@ -23,8 +30,11 @@ public class Main {
      */
     private static Parser createParser(String[] args) {
         String filepath;
-        if (args.length != 0) filepath = args[0];
-        else filepath = "data/random10000.txt";
+        if (args.length != 0) {
+            filepath = args[0];
+        } else {
+            filepath = "data/pi2.txt";
+        }
 
         Parser parser;
         try {
@@ -37,31 +47,30 @@ public class Main {
         }
     }
 
-    /**
-     * Creates array of Horses, then fills the array with corresponding data
-     * based on input file (X, Y, Weight and Time attributes of horses)
-     * @param data input data from file
-     * @param numberOfHorses the number of horses that are present
-     * @return array of horses based on input file
-     */
-    private static Horse[] fillHorses(ArrayList<Double> data, int numberOfHorses) {
-        Horse[] horses = new Horse[numberOfHorses];
-
-        for(int i = 0; i < numberOfHorses*4; i += 4) {
-            double x = data.get(i + 3);
-            double y = data.get(i + 4);
-            double weight = data.get(i + 5);
-            double time = data.get(i + 6);
-            Horse horse = new Horse(x, y, weight, time);
-            horse.index = i/4;
-            // Do something with the horse here | add to the graph or something
-            horses[i / 4] = horse;
-        }
-
-        return horses;
-    }
-
-
+    // Commeted, because PMD :)
+//    /**
+//     * Creates array of Horses, then fills the array with corresponding data
+//     * based on input file (X, Y, Weight and Time attributes of horses)
+//     * @param data input data from file
+//     * @param numberOfHorses the number of horses that are present
+//     * @return array of horses based on input file
+//     */
+//    private static Horse[] fillHorses(ArrayList<Double> data, int numberOfHorses) {
+//        Horse[] horses = new Horse[numberOfHorses];
+//
+//        for(int i = 0; i < numberOfHorses*4; i += 4) {
+//            double x = data.get(i + 3);
+//            double y = data.get(i + 4);
+//            double weight = data.get(i + 5);
+//            double time = data.get(i + 6);
+//            Horse horse = new Horse(x, y, weight, time);
+//            horse.index = i/4;
+//            // Do something with the horse here | add to the graph or something
+//            horses[i / 4] = horse;
+//        }
+//
+//        return horses;
+//    }
 
     /**
      * Creates array of Aircrafts, then fills the array with corresponding data
@@ -71,7 +80,7 @@ public class Main {
      * @param numberOfHorses the number of horses that are present
      * @return array of aircrafts based on input file
      */
-    private static Aircraft[] fillAirplanes(ArrayList<Double> data, int numberOfAircrafts, int numberOfHorses) {
+    private static Aircraft[] fillAirplanes(AbstractList<Double> data, int numberOfAircrafts, int numberOfHorses) {
         Aircraft[] airplanes = new Aircraft[numberOfAircrafts];
 
         for(int i = 0; i < numberOfAircrafts*4; i += 4) {
@@ -93,8 +102,10 @@ public class Main {
      * @param nodesInOrder nodes in order of simulation
      * @param visualization true if window should open up, false otherwise
      */
-    private static void visulize(ArrayList<GraphNode> nodesInOrder, boolean visualization) {
-        if (!visualization) return;
+    private static void visulize(AbstractList<GraphNode> nodesInOrder, boolean visualization) {
+        if (!visualization) {
+            return;
+        }
         java.util.Timer timer = new java.util.Timer();
 
         JFrame window = new JFrame();
@@ -114,66 +125,11 @@ public class Main {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(panel.drawFlight(winGraph)) timer.cancel();
+                if(panel.drawFlight(winGraph)) {
+                    timer.cancel();
+                }
             }
         }, 0L, 5L);
-    }
-
-    /**
-     * Entry point, start the app
-     * @param args arguments from cmd
-     *             Expecting first argument to be filepath to input file
-     */
-    public static void main(String[] args) {
-        // ini
-        Parser parser = createParser(args);
-        if (parser == null) return;
-        velocitySum = 0.0;
-        distFunction = new CartesianDist();
-        boolean visualization = true; // Visualization window
-
-        // data and paris
-        ArrayList<Double> data = parser.getInput();
-        GraphNode paris = new GraphNode(data.get(0), data.get(1));
-
-        // horses
-        double temp = data.get(2);
-        int numberOfHorses = NUMBER_OF_HORSES = (int) temp;
-       // Horse[] horses = fillHorses(data, numberOfHorses);
-        ArrayList<Horse> horsesList = fillHorsesList(data,numberOfHorses);
-
-        // aircrafts
-        temp = data.get(3 + numberOfHorses * 4);
-        int numberOfAircrafts = (int) temp;
-        Aircraft[] airplanes = fillAirplanes(data, numberOfAircrafts, numberOfHorses);
-
-        //sort planes by speed
-        Arrays.sort(airplanes, (a,b) -> {
-            double epsilon = 1e-7;
-            return Math.abs(a.speed - b.speed) < epsilon ? 0 : (int)(a.speed - b.speed);
-        });
-
-        //numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
-
-        // graph
-        MetricsGraph[] graph;
-
-        graph = assignHorsesToAirplanes(airplanes,horsesList, paris);
-        horsesList = null; //the method above emptied the List, setting to null to avoid mem leak
-
-        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
-        ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
-
-        FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
-        sim.simulate(nodesInOrder);
-        System.out.printf("Celkem prepraveno %d koni.",numberOfHorses);
-
-        // visualization
-        visulize(nodesInOrder, visualization);
-
-
-/////////////////// WORKING CODE ENDS HERE /////////////////////////////////////////////////////////////////////////////
-
     }
 
     /**
@@ -183,8 +139,8 @@ public class Main {
      * @param numberOfHorses the number of horses that are present
      * @return array list of horses based on input file
      */
-    private static ArrayList<Horse> fillHorsesList(ArrayList<Double> data, int numberOfHorses) {
-        ArrayList<Horse> horses = new ArrayList<>();
+    private static AbstractList<Horse> fillHorsesList(AbstractList<Double> data, int numberOfHorses) {
+        AbstractList<Horse> horses = new ArrayList<>();
 
         for(int i = 0; i < numberOfHorses*4; i += 4) {
             double x = data.get(i + 3);
@@ -212,7 +168,7 @@ public class Main {
      * @param paris paris
      * @return array of MetricsGraphs which act like division of horses assigned to an airplane
      */
-    private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, ArrayList<Horse> horsesList, GraphNode paris) {
+    private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, AbstractList<Horse> horsesList, GraphNode paris) {
         MetricsGraph graphs[] = new MetricsGraph[airplanes.length];
         int[] horseIndices; ArrayList<Horse> horses;
 
@@ -220,12 +176,14 @@ public class Main {
             horses = new ArrayList<>();
             horseIndices = getClosestHorses(horsesList,airplanes[i]);
 
-            for (int index : horseIndices)
+            for (int index : horseIndices) {
                 horses.add(horsesList.get(index));
+            }
 
             //so that we dont get the same horse twice
-            for(Horse h : horses)
+            for(Horse h : horses) {
                 horsesList.remove(h);
+            }
 
             graphs[i] = new MetricsGraph(horses.toArray(Horse[]::new),airplanes[i],paris,distFunction);
         }
@@ -243,7 +201,7 @@ public class Main {
      * @param plane the current plane
      * @return array of indices of the <code>horses</code> array, on which are the closest Horse objects
      */
-    private static int[] getClosestHorses(ArrayList<Horse> nodes, Aircraft plane) {
+    private static int[] getClosestHorses(AbstractList<Horse> nodes, Aircraft plane) {
         int numberOfUnassignedHorses = nodes.size();
         //calculate how much horses to assign to this plane
         int[] indeces = new int[numOfHorsesBasedOnVelocity(plane.speed)];
@@ -273,6 +231,61 @@ public class Main {
      */
     private static int numOfHorsesBasedOnVelocity(double velocity) {
         return (int)(NUMBER_OF_HORSES*velocity/velocitySum);
+    }
+
+    /**
+     * Entry point, start the app
+     * @param args arguments from cmd
+     *             Expecting first argument to be filepath to input file
+     */
+    public static void main(String[] args) {
+        // ini
+        Parser parser = createParser(args);
+        if (parser == null) {
+            return;
+        }
+        velocitySum = 0.0;
+        distFunction = new CartesianDist();
+        boolean visualization = true; // Visualization window
+
+        // data and paris
+        AbstractList<Double> data = parser.getInput();
+        GraphNode paris = new GraphNode(data.get(0), data.get(1));
+
+        // horses
+        double temp = data.get(2);
+        int numberOfHorses = NUMBER_OF_HORSES = (int) temp;
+        // Horse[] horses = fillHorses(data, numberOfHorses);
+        AbstractList<Horse> horsesList = fillHorsesList(data,numberOfHorses);
+
+        // aircrafts
+        temp = data.get(3 + numberOfHorses * 4);
+        int numberOfAircrafts = (int) temp;
+        Aircraft[] airplanes = fillAirplanes(data, numberOfAircrafts, numberOfHorses);
+
+        //sort planes by speed
+        Arrays.sort(airplanes, (a,b) -> {
+            double epsilon = 1e-7;
+            return Math.abs(a.speed - b.speed) < epsilon ? 0 : (int)(a.speed - b.speed);
+        });
+
+        //numberOfAircrafts = Math.min(1,numberOfAircrafts); //FOR 1 PLANE ONLY
+
+        // graph
+        MetricsGraph[] graph;
+
+        graph = assignHorsesToAirplanes(airplanes,horsesList, paris);
+        horsesList = null; //the method above emptied the List, setting to null to avoid mem leak
+
+        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
+        ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
+
+        FlightSimulator sim = FlightSimulator.getSimulator(graph,algorithm);
+        sim.simulate(nodesInOrder);
+        System.out.printf("Celkem prepraveno %d koni.",numberOfHorses);
+
+        // visualization
+        visulize(nodesInOrder, visualization);
     }
 
 }

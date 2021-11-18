@@ -1,5 +1,3 @@
-import java.util.Objects;
-
 /**
  * Class represents a horse
  * Horse has some position - x , y
@@ -30,17 +28,24 @@ public class Horse extends GraphNode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         Horse horse = (Horse) o;
         return index == horse.index;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+    // PMD said this was useless :)
+//    @Override
+//    public int hashCode() {
+//        return super.hashCode();
+//    }
 
     @Override
     public String toString() {

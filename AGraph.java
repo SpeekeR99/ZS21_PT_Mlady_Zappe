@@ -1,7 +1,3 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.TreeSet;
-
 /**
  * A complete undirected weighted graph with the edge weights being equal to the planar or cartesian
  * distance of two nodes
@@ -190,8 +186,12 @@ class MetricsGraph{
      * @throws RuntimeException when flying to a horse already visited
      */
     public void flyTo(int i){
-        if(i==PLANE_INDEX) throw new IllegalArgumentException("Plane cannot fly to itself");
-        if(i>=2 && visited[i]) throw new RuntimeException("Flying to a horse already visited");
+        if(i==PLANE_INDEX) {
+            throw new IllegalArgumentException("Plane cannot fly to itself");
+        }
+        if(i>=2 && visited[i]) {
+            throw new RuntimeException("Flying to a horse already visited");
+        }
 
         time += timeFromVelAndDist(getAirplane().speed,getWeight(PLANE_INDEX,i));
         getAirplane().flyTo(nodes[i].x,nodes[i].y);
@@ -205,7 +205,9 @@ class MetricsGraph{
      * @param i node
      */
     private void visit(int i){
-        if(visited[i]) return;
+        if(visited[i]) {
+            return;
+        }
         visited[i] = true;
         visitedNum++;
     }
@@ -220,42 +222,44 @@ class MetricsGraph{
     }
 }
 
-/**
- * A "graph" using the TreeSet collection to quickly find the closest horse to the plane's current location
- */
-class TreeSetGraph{
-    TreeSet<GraphNode> nodes;
-    GraphNode paris;
-    Aircraft plane;
-
-    TreeSetGraph(Horse[] horses, Aircraft plane, GraphNode paris, Comparator<GraphNode> comp) {
-        nodes = new TreeSet<>(comp);
-        for (Horse horse :horses) {
-            if(nodes.contains(horse))
-                System.out.println(horse.x + " " + horse.y);
-            nodes.add(horse);
-        }
-
-        this.plane = plane;
-        this.paris = paris;
-    }
-
-    public Horse closestToPlane(){
-        GraphNode closest = nodes.ceiling(plane);
-        if(closest==null) closest = nodes.first();
-        return (Horse) closest;
-    }
-
-    public Aircraft getPlane(){
-        return  plane;
-    }
-
-    public boolean goneThroughAll(){
-        return nodes.isEmpty();
-    }
-    public void delete(Horse h){
-        nodes.remove(h);
-    }
-}
-
-
+    // Unused and was causing PMD troubles with "TreeSet" :)
+///**
+// * A "graph" using the TreeSet collection to quickly find the closest horse to the plane's current location
+// */
+//class TreeSetGraph{
+//    TreeSet<GraphNode> nodes;
+//    GraphNode paris;
+//    Aircraft plane;
+//
+//    TreeSetGraph(Horse[] horses, Aircraft plane, GraphNode paris, Comparator<GraphNode> comp) {
+//        nodes = new TreeSet<>(comp);
+//        for (Horse horse :horses) {
+//            if(nodes.contains(horse)) {
+//                System.out.println(horse.x + " " + horse.y);
+//            }
+//            nodes.add(horse);
+//        }
+//
+//        this.plane = plane;
+//        this.paris = paris;
+//    }
+//
+//    public Horse closestToPlane(){
+//        GraphNode closest = nodes.ceiling(plane);
+//        if(closest==null) {
+//            closest = nodes.first();
+//        }
+//        return (Horse) closest;
+//    }
+//
+//    public Aircraft getPlane(){
+//        return  plane;
+//    }
+//
+//    public boolean goneThroughAll(){
+//        return nodes.isEmpty();
+//    }
+//    public void delete(Horse h){
+//        nodes.remove(h);
+//    }
+//}

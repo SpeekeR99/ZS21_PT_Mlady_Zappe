@@ -3,7 +3,9 @@
  */
 public class MinHeap{
 
+    /** heap */
     private final HeapElement[] heap;
+    /** count */
     private int count;
 
     /**
@@ -49,33 +51,58 @@ public class MinHeap{
     public int count() {
         return count;
     }
+
+    /**
+     * size
+     * @return size of heap
+     */
     public int size() {return heap.length-1;}
 
+    /**
+     * Correcting heap up
+     * @param n node
+     */
     private void siftUp(int n){
-        if(n==1) return;
+        if(n==1) {
+            return;
+        }
         int p = n/2;
         if(heap[p].weight()>heap[n].weight()){
             swap(n, p);
             siftUp(p);
         }
     }
+
+    /**
+     * Correcting heap down
+     * @param n node
+     */
     private void siftDown(int n){
         int j;
         if((j = 2*n)<=count){
-            if(j+1<=count && heap[j+1].weight()<heap[j].weight())
+            if(j+1<=count && heap[j+1].weight()<heap[j].weight()) {
                 j++;
-            if(heap[n].weight()<heap[j].weight())
+            }
+            if(heap[n].weight()<heap[j].weight()) {
                 return;
+            }
             swap(j,n);
             siftDown(j);
         }
     }
+
+    /**
+     * Swap two elements
+     * @param i element1
+     * @param j element2
+     */
     private void swap(int i, int j){
         HeapElement tmp = heap[i];
         heap[i] = heap[j];
         heap[j] = tmp;
     }
 }
+
 /**
  * Element of a heap representing an edge:
  * knows the value of the ending node of the edge

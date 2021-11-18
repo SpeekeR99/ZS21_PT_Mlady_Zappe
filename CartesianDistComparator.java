@@ -36,8 +36,9 @@ public class CartesianDistComparator implements Comparator<GraphNode> {
                     ret =  0;
                 }
         }
-        if(o1 instanceof Horse && o2 instanceof Horse)
-            if(ret == 0) ret = ((Horse) o1).index - ((Horse) o2).index;
+        if(o1 instanceof Horse && o2 instanceof Horse && ret == 0) {
+            ret = ((Horse) o1).index - ((Horse) o2).index;
+        }
 
        return ret;
 

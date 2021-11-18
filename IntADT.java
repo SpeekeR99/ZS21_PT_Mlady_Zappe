@@ -1,5 +1,8 @@
 import java.util.function.IntConsumer;
 
+/**
+ * Abstract Data Structures of Integers
+ */
 public interface IntADT{
     /**
      * adds the number to the collection
@@ -13,6 +16,10 @@ public interface IntADT{
      */
     int pop();
 
+    /**
+     * count
+     * @return number
+     */
     int count();
 
     /**
@@ -21,10 +28,16 @@ public interface IntADT{
      */
     void foreach(IntConsumer action);
 }
-class IntQueue implements IntADT{
-    private IntADTEntry head;
-    private IntADTEntry tail;
 
+/**
+ * Queue of Integers
+ */
+class IntQueue implements IntADT{
+    /** head */
+    private IntADTEntry head;
+    /** tail */
+    private IntADTEntry tail;
+    /** counter */
     private int count = 0;
 
     @Override
@@ -75,8 +88,14 @@ class IntQueue implements IntADT{
         return count;
     }
 }
+
+/**
+ * Entry
+ */
 class IntADTEntry {
+    /** value */
     int val;
+    /** next */
     IntADTEntry next;
 
     public IntADTEntry(int val, IntADTEntry next) {

@@ -1,3 +1,6 @@
+/**
+ * ClosestNeighbourPath
+ */
 class ClosestNeighbourPath{
     final int PLANE = MetricsGraph.PLANE_INDEX, HORSE_OFFSET = 2;
 
@@ -29,7 +32,9 @@ class ClosestNeighbourPath{
         int closest = -1;
 
         for (int i = HORSE_OFFSET; i < graph.getNumOfHorses()+HORSE_OFFSET; i++) {
-            if(i==node) continue;
+            if(i==node) {
+                continue;
+            }
             dist = graph.getWeight(node,i);
             if(dist<minDist && canGetHorse(graph,i)){
                 minDist = dist;
@@ -48,7 +53,8 @@ class ClosestNeighbourPath{
     private boolean canGetHorse(MetricsGraph graph, int horseIndex){
         Aircraft plane = graph.getAirplane();
         Horse horse = graph.getHorse(horseIndex);
-        double MAX_DIST = 1000.0;
+        // Unused, so commented, PMD :)
+//        double MAX_DIST = 1000.0;
 
         return (
                 (!graph.isVisited(horseIndex)) &&
