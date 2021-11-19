@@ -1,4 +1,5 @@
 import java.util.AbstractList;
+import java.util.Scanner;
 
 /**
  * This singleton class handles the whole simulation
@@ -55,8 +56,6 @@ public class FlightSimulator {
         graphFinished = null;
     }
 
-    //the state variables of graphs
-
     /**
      * Indicates what happens now and next
      */
@@ -81,44 +80,83 @@ public class FlightSimulator {
      * Index of Paris
      */
     private final int PARIS = MetricsGraph.PARIS_INDEX;
+    /**
+     * Keyboard input
+     */
+    private Scanner keyboard;
 
     /**
      * Runs the simulation
      *
      * @param nodesInOrder ArrayList to be filled in for visualization
+     * @param stepping     If user wants to go step by step in simulation
      */
-    public void simulate(AbstractList<GraphNode> nodesInOrder) {
+    public void simulate(AbstractList<GraphNode> nodesInOrder, boolean stepping) {
+        boolean localStep = stepping;
+        if (localStep) {
+            System.out.println("Welcome in simulation step by step!\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
+        }
 
-        // Unused and causing PMD troubles :)
-//        int PLANE = MetricsGraph.PLANE_INDEX, HORSE_OFFSET = 2;
-
+        keyboard = new Scanner(System.in);
         boolean notDone = true;
-
         while (notDone) {
             notDone = false;
 
             for (int i = 0; i < graphs.length; i++) {
+                if (localStep) {
+                    localStep = whatNowStep();
+                }
+
                 if (graphFinished[i]) {
                     continue;
                 }
 
-                if (graphs[i].atHorse()) {
-                    atHorse(i, nodesInOrder);
-                } else if (graphs[i].atParis()) {
-                    atParis(i, nodesInOrder);
-                } else if (graphs[i].atStart()) {
-                    atStart(i, nodesInOrder);
+                if (doNextStep(i, nodesInOrder)) {
+                    continue;
                 }
 
                 //  if(curHorse_isHorseIndex) curHorse = graphs[i].getHorse(curHorse).index;
-
                 System.out.println(formatOutput(event, Math.round(curTime), i, curHorse, Math.round(departure), next));
-
-
                 notDone = true;
-
             }
         }
+        keyboard.close();
+    }
+
+    /**
+     * Step by step simulation
+     *
+     * @return true if step by step is continueing, false if not
+     */
+    private boolean whatNowStep() {
+        do {
+            String input = keyboard.nextLine();
+            if (input.equals("Next") || input.equals("next")) {
+                return true;
+            } else if (input.equals("Finish") || input.equals("finish")) {
+                return false;
+            } else {
+                System.out.println("Unknown command.\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
+            }
+        } while (true);
+    }
+
+    /**
+     * Decides what is the next step to be done by the plane
+     *
+     * @param i            Iteration of for loop
+     * @param nodesInOrder Nodes in order for visuals
+     * @return True if for loop is to be continued
+     */
+    private boolean doNextStep(int i, AbstractList<GraphNode> nodesInOrder) {
+        if (graphs[i].atHorse()) {
+            atHorse(i, nodesInOrder);
+        } else if (graphs[i].atParis()) {
+            atParis(i, nodesInOrder);
+        } else if (graphs[i].atStart()) {
+            return atStart(i, nodesInOrder);
+        }
+        return false;
     }
 
     /**
@@ -190,8 +228,9 @@ public class FlightSimulator {
      *
      * @param i            Iteration of for
      * @param nodesInOrder Nodes in order for visuals
+     * @return true if continue was in the original for loop
      */
-    private void atStart(int i, AbstractList<GraphNode> nodesInOrder) {
+    private boolean atStart(int i, AbstractList<GraphNode> nodesInOrder) {
         //at start -> only fly to a horse
         closest = algorithm.findNextClosestHorse(graphs[i]);
 
@@ -203,12 +242,13 @@ public class FlightSimulator {
         if (closest == -1) {
             //no horses in graph, the airplane does not have to fly at all
             graphFinished[i] = true;
-            return;
+            return true;
         }
 
         graphs[i].flyTo(closest);
 
         nodesInOrder.add(graphs[i].getHorse(closest));
+        return false;
     }
 
     /**

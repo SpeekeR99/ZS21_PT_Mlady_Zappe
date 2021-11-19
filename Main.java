@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Main class, entry point of the app
@@ -26,6 +23,10 @@ public class Main {
      * number of horses
      */
     private static int NUMBER_OF_HORSES;
+    /**
+     * Keyboard input
+     */
+    public static Scanner sc;
 
     /**
      * Creates instance of class Parser based on args
@@ -40,7 +41,7 @@ public class Main {
         if (args.length != 0) {
             filepath = args[0];
         } else {
-            filepath = "data/generated1000.txt";
+            filepath = "data/fibonacci.txt";
         }
 
         Parser parser;
@@ -179,7 +180,7 @@ public class Main {
      * @return array of MetricsGraphs which act like division of horses assigned to an airplane
      */
     private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, AbstractList<Horse> horsesList, GraphNode paris) {
-        MetricsGraph graphs[] = new MetricsGraph[airplanes.length];
+        MetricsGraph[] graphs = new MetricsGraph[airplanes.length];
         int[] horseIndices;
         ArrayList<Horse> horses;
 
@@ -294,7 +295,21 @@ public class Main {
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
 
         FlightSimulator sim = FlightSimulator.getSimulator(graph, algorithm);
-        sim.simulate(nodesInOrder);
+        sc = new Scanner(System.in);
+        System.out.println("Welcome!\nWould you like to run the whole simulation at once, or go step by step?\n(1 = step by step | 0 = at once)");
+        do {
+            String input = sc.nextLine();
+            if (input.equals("1")) {
+                sim.simulate(nodesInOrder, true);
+                break;
+            } else if (input.equals("0")) {
+                sim.simulate(nodesInOrder, false);
+                break;
+            } else {
+                System.out.println("Unknown input!\nPlease input \"1\" or \"0\"");
+            }
+        } while (true);
+        sc.close();
         System.out.printf("Celkem prepraveno %d koni.", numberOfHorses);
 
         // visualization

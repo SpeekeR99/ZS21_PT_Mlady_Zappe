@@ -18,9 +18,9 @@ public class Generator {
      *             third argument is expected to be the wanted number of airplanes
      */
     public static void main(String[] args) {
-        int numberOfHorses = 0;
-        int numberOfAirplanes = 0;
-        String filepath = "";
+        int numberOfHorses;
+        int numberOfAirplanes;
+        String filepath;
         if (args.length != 3) {
             filepath = "data/generated_data.txt";
             numberOfHorses = 100;
