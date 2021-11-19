@@ -44,7 +44,7 @@ public class Main {
         if (args.length != 0) {
             filepath = args[0];
         } else {
-            filepath = "data/fibonacci.txt";
+            filepath = "data/generated100.txt";
         }
 
         Parser parser;

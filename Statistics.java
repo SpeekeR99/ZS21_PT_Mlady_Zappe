@@ -19,6 +19,10 @@ public class Statistics {
     private final long olympicsStartTime;
     /** Name of input file */
     private final String inputFileName;
+    /** Sum of all flight times */
+    private long sumOfAllFlightTimes;
+    /** Sum of all waiting times */
+    private long sumOfAllWaitingTimes;
 
     /**
      * Constructor sets the arraylist
@@ -30,6 +34,8 @@ public class Statistics {
         this.nodesInOrder = nodesInOrder;
         this.olympicsStartTime = Math.round(olympicsStartTime);
         this.inputFileName = inputFile.replace(".txt", "").replace("data/", "");
+        this.sumOfAllFlightTimes = 0;
+        this.sumOfAllWaitingTimes = 0;
     }
 
     /**
@@ -45,16 +51,14 @@ public class Statistics {
      * Report from all airplanes, which horses when and where it took, statistics of weight capacity, time of flying and waiting
      */
     private void generateAirplaneStats() {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR+inputFileName+"_airplanes_statistics.txt")));
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR + inputFileName + "_airplanes_statistics.txt")))) {
 
-            for(int i = 0; i < airplanes.length; i++) {
+            for (int i = 0; i < airplanes.length; i++) {
                 Aircraft airplane = airplanes[i];
                 pw.println("Letoun " + i);
                 int weight = 0;
                 long prostoje = 0;
-                for(int j = 0; j < nodesInOrder.size() - 1; j++) {
+                for (int j = 0; j < nodesInOrder.size() - 1; j++) {
                     GraphNode h = nodesInOrder.get(j);
                     if (h instanceof Horse && ((Horse) h).transportedBy == airplane) {
                         if (weight + ((Horse) h).weight > airplane.weightCapacity) {
@@ -65,7 +69,7 @@ public class Statistics {
                         prostoje += ((Horse) h).time * 2; // * 2 because Horse is loaded AND unloaded with the same time needed
 
                         pw.println("\tNabral kone " + ((Horse) h).index + " v case: " + ((Horse) h).timePickUp +
-                                " a pokracoval v ceste na: X = " + nodesInOrder.get(j+1).x + " | Y = " + nodesInOrder.get(j+1).y +
+                                " a pokracoval v ceste na: X = " + nodesInOrder.get(j + 1).x + " | Y = " + nodesInOrder.get(j + 1).y +
                                 " a zatizeni v tu chvili mel: " + weight);
                         if (weight >= airplane.weightCapacity) {
                             weight = 0;
@@ -74,14 +78,12 @@ public class Statistics {
                     }
                 }
                 pw.println("\tDoba letu: " + airplane.endOfFlightTime + " a doba prostoju: " + prostoje);
+                sumOfAllFlightTimes += airplane.endOfFlightTime;
+                sumOfAllWaitingTimes += prostoje;
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (pw != null) {
-                pw.close();
-            }
         }
     }
 
@@ -89,16 +91,14 @@ public class Statistics {
      * Report from all horses, where and how it travelled, how soon it was in Paris
      */
     private void generateHorsesStats() {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR+inputFileName+"_horses_statistics.txt")));
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR + inputFileName + "_horses_statistics.txt")))) {
 
-            for(GraphNode h : nodesInOrder) {
+            for (GraphNode h : nodesInOrder) {
                 if (h instanceof Horse) {
-                    pw.println("Kun "+((Horse) h).index);
-                    String coords = "";
-                    for(GraphNode beenAt : ((Horse) h).beenThrough) {
-                        coords = coords + " | X = " + beenAt.x + " Y = " + beenAt.y;
+                    pw.println("Kun " + ((Horse) h).index);
+                    StringBuilder coords = new StringBuilder();
+                    for (GraphNode beenAt : ((Horse) h).beenThrough) {
+                        coords.append(" | X = ").append(beenAt.x).append(" Y = ").append(beenAt.y);
                     }
                     pw.println("\tCestoval pres: " + coords + " .");
                     long cas = ((Horse) h).timeDroppedInParis - ((Horse) h).timePickUp;
@@ -110,10 +110,6 @@ public class Statistics {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (pw != null) {
-                pw.close();
-            }
         }
     }
 
@@ -121,15 +117,14 @@ public class Statistics {
      * Total time of all flights, all waitings and total time of moving
      */
     private void generateTimeStats() {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR+inputFileName+"_times_statistics.txt")));
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(STATISTICS_DIR + inputFileName + "_times_statistics.txt")))) {
+
+            pw.println("Celkova doba vsech letu: " + sumOfAllFlightTimes);
+            pw.println("Celkova doba prostoju: " + sumOfAllWaitingTimes);
+            pw.println("Celkova doba prepravy: " + (sumOfAllFlightTimes - sumOfAllWaitingTimes));
+
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (pw != null) {
-                pw.close();
-            }
         }
     }
 
