@@ -225,6 +225,7 @@ public class FlightSimulator {
             graphs[i].flyTo(next);
 
             nodesInOrder.add(graphs[i].getHorse(next));
+            next = graphs[i].getHorse(next).index;
         }
     }
 
