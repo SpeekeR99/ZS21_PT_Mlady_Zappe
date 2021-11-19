@@ -25,6 +25,10 @@ public class Aircraft extends GraphNode {
      * Horses currently onboard (statistics)
      */
     public AbstractList<Horse> loadedHorses;
+    /**
+     * Time when airplane ended its flight (statistics)
+     */
+    public long endOfFlightTime;
 
     /**
      * Creates a new Aircraft object

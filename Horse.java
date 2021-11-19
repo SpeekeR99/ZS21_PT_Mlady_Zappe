@@ -33,6 +33,10 @@ public class Horse extends GraphNode {
      * GraphNodes horse has been through before landing in Paris (statistics)
      */
     public AbstractList<GraphNode> beenThrough;
+    /**
+     * Transported by specific aircraft (statistics)
+     */
+    public Aircraft transportedBy;
 
     /**
      * Creates a new Horse object

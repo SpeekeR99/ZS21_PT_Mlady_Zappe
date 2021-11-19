@@ -112,6 +112,7 @@ public class FlightSimulator {
                 }
 
                 if (graphFinished[i]) {
+                    graphs[i].getAirplane().endOfFlightTime = Math.round(graphs[i].getTime());
                     continue;
                 }
 
@@ -179,6 +180,7 @@ public class FlightSimulator {
         for (Horse h : graphs[i].getAirplane().loadedHorses) {
             h.beenThrough.add(graphs[i].getHorse(curHorse));
         }
+        graphs[i].getHorse(curHorse).transportedBy = graphs[i].getAirplane();
         departure = graphs[i].getTime(); //the .load() method above changed the time
 
         closest = algorithm.findNextClosestHorse(graphs[i]);

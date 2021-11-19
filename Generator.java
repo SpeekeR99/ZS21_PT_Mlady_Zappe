@@ -43,9 +43,7 @@ public class Generator {
      * @param numberOfAirplanes Number of airplanes
      */
     private static void generate(String filepath, int numberOfHorses, int numberOfAirplanes) {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(filepath)));
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filepath)))) {
             Random rand = new Random();
             int max = 1_000_000; // Maximum coordinate possible (Minimum is 0)
 
@@ -80,10 +78,6 @@ public class Generator {
         } catch (IOException e) {
             System.out.println("Error occured while trying to write into a file.");
             e.printStackTrace();
-        } finally {
-            if (pw != null) {
-                pw.close();
-            }
         }
 
     }

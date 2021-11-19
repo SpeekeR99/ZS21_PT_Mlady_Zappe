@@ -320,7 +320,7 @@ public class Main {
         visulize(nodesInOrder, visualization);
 
         //statistics
-        Statistics stats = new Statistics(nodesInOrder, olympicsStartTime, filepath);
+        Statistics stats = new Statistics(airplanes, nodesInOrder, olympicsStartTime, filepath);
         stats.generateStats();
     }
 
