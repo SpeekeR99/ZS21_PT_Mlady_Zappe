@@ -73,9 +73,13 @@ public class FlightSimulator {
      */
     private int curHorse = -1;
     /**
-     * The closest horse and the next horse to fly to
+     * The closest horse
      */
-    private int closest = -1, next = -1;
+    private int closest = -1;
+    /**
+     * the next horse to fly to
+     */
+    private int next = -1;
     /**
      * Index of Paris
      */
@@ -189,6 +193,7 @@ public class FlightSimulator {
             graphs[i].flyTo(next);
 
             nodesInOrder.add(graphs[i].getHorse(next));
+            next = graphs[i].getHorse(next).index;
         }
 
         curHorse = graphs[i].getHorse(curHorse).index;
