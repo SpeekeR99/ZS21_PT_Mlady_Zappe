@@ -41,7 +41,7 @@ public class Main {
         if (args.length != 0) {
             filepath = args[0];
         } else {
-            filepath = "data/fibonacci.txt";
+            filepath = "data/pi2.txt";
         }
 
         Parser parser;
@@ -128,7 +128,7 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        Graphics winGraph = window.getGraphics();
+        Graphics winGraph = panel.getGraphics();
 
         //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
 
@@ -314,6 +314,10 @@ public class Main {
 
         // visualization
         visulize(nodesInOrder, visualization);
+
+        //statistics
+        Statistics stats = new Statistics(nodesInOrder);
+        stats.doStuff();
     }
 
 }

@@ -1,3 +1,5 @@
+import java.util.AbstractList;
+
 /**
  * Generator for statistics
  * Report from all airplanes, which horses when and where it took, statistics of weight capacity, time of flying and waiting
@@ -6,10 +8,20 @@
  */
 public class Statistics {
 
-    public Statistics() {
+    private AbstractList<GraphNode> nodesInOrder;
 
+    public Statistics(AbstractList<GraphNode> nodesInOrder) {
+        this.nodesInOrder = nodesInOrder;
     }
 
-
+    public void doStuff() {
+        int i = 0;
+        for (GraphNode gn : nodesInOrder) {
+            if (gn instanceof Aircraft) {
+                i++;
+            }
+        }
+        System.out.println(i);
+    }
 
 }
