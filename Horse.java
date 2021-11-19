@@ -1,3 +1,6 @@
+import java.util.AbstractList;
+import java.util.ArrayList;
+
 /**
  * Class represents a horse
  * Horse has some position - x , y
@@ -18,6 +21,18 @@ public class Horse extends GraphNode {
      * the horse's index
      **/
     public int index;
+    /**
+     * Time of being picked up by airplane (statistics)
+     */
+    public long timePickUp;
+    /**
+     * Time of being dropped in Paris (statistics)
+     */
+    public long timeDroppedInParis;
+    /**
+     * GraphNodes horse has been through before landing in Paris (statistics)
+     */
+    public AbstractList<GraphNode> beenThrough;
 
     /**
      * Creates a new Horse object
@@ -31,6 +46,7 @@ public class Horse extends GraphNode {
         super(x, y);
         this.weight = weight;
         this.time = time;
+        this.beenThrough = new ArrayList<>();
     }
 
     @Override

@@ -27,6 +27,10 @@ public class Main {
      * Keyboard input
      */
     public static Scanner sc;
+    /**
+     * Input file
+     */
+    private static String filepath;
 
     /**
      * Creates instance of class Parser based on args
@@ -37,11 +41,10 @@ public class Main {
      * @return instance of Parser or NULL, based on if the file exists or not
      */
     private static Parser createParser(String[] args) {
-        String filepath;
         if (args.length != 0) {
             filepath = args[0];
         } else {
-            filepath = "data/pi2.txt";
+            filepath = "data/fibonacci.txt";
         }
 
         Parser parser;
@@ -295,15 +298,16 @@ public class Main {
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
 
         FlightSimulator sim = FlightSimulator.getSimulator(graph, algorithm);
+        double olympicsStartTime;
         sc = new Scanner(System.in);
         System.out.println("Welcome!\nWould you like to run the whole simulation at once, or go step by step?\n(1 = step by step | 0 = at once)");
         do {
             String input = sc.nextLine();
             if (input.equals("1")) {
-                sim.simulate(nodesInOrder, true);
+                olympicsStartTime = sim.simulate(nodesInOrder, true);
                 break;
             } else if (input.equals("0")) {
-                sim.simulate(nodesInOrder, false);
+                olympicsStartTime = sim.simulate(nodesInOrder, false);
                 break;
             } else {
                 System.out.println("Unknown input!\nPlease input \"1\" or \"0\"");
@@ -316,8 +320,8 @@ public class Main {
         visulize(nodesInOrder, visualization);
 
         //statistics
-        Statistics stats = new Statistics(nodesInOrder);
-        stats.doStuff();
+        Statistics stats = new Statistics(nodesInOrder, olympicsStartTime, filepath);
+        stats.generateStats();
     }
 
 }

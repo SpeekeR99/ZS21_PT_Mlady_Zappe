@@ -95,7 +95,7 @@ public class FlightSimulator {
      * @param nodesInOrder ArrayList to be filled in for visualization
      * @param stepping     If user wants to go step by step in simulation
      */
-    public void simulate(AbstractList<GraphNode> nodesInOrder, boolean stepping) {
+    public double simulate(AbstractList<GraphNode> nodesInOrder, boolean stepping) {
         boolean localStep = stepping;
         if (localStep) {
             System.out.println("Welcome in simulation step by step!\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
@@ -125,6 +125,7 @@ public class FlightSimulator {
             }
         }
         keyboard.close();
+        return curTime;
     }
 
     /**
@@ -173,6 +174,11 @@ public class FlightSimulator {
         curTime = graphs[i].getTime();
         curHorse = graphs[i].getCurrentlyAt();
         graphs[i].load(curHorse);
+        graphs[i].getHorse(curHorse).timePickUp = Math.round(graphs[i].getTime());
+        graphs[i].getAirplane().loadedHorses.add(graphs[i].getHorse(curHorse));
+        for (Horse h : graphs[i].getAirplane().loadedHorses) {
+            h.beenThrough.add(graphs[i].getHorse(curHorse));
+        }
         departure = graphs[i].getTime(); //the .load() method above changed the time
 
         closest = algorithm.findNextClosestHorse(graphs[i]);
@@ -209,6 +215,10 @@ public class FlightSimulator {
     private void atParis(int i, AbstractList<GraphNode> nodesInOrder) {
         curTime = graphs[i].getTime();
         curHorse = graphs[i].getCurrentlyAt(); //should be Paris
+        for(Horse h : graphs[i].getAirplane().loadedHorses) {
+            h.timeDroppedInParis = Math.round(graphs[i].getTime());
+        }
+        graphs[i].getAirplane().loadedHorses.clear();
         graphs[i].unloadInParis();
         departure = graphs[i].getTime(); //method above updated the time
 

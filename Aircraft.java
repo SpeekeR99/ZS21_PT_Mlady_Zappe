@@ -1,3 +1,6 @@
+import java.util.AbstractList;
+import java.util.ArrayList;
+
 /**
  * Class represents an Aircraft that exports horses
  * Aircraft has some position - x , y
@@ -18,6 +21,10 @@ public class Aircraft extends GraphNode {
      * speed of the aircraft (velocity)
      */
     public double speed;
+    /**
+     * Horses currently onboard (statistics)
+     */
+    public AbstractList<Horse> loadedHorses;
 
     /**
      * Creates a new Aircraft object
@@ -32,6 +39,7 @@ public class Aircraft extends GraphNode {
         this.weightCapacity = weightCapacity;
         currCapacity = 0.0;
         this.speed = speed;
+        this.loadedHorses = new ArrayList<>();
     }
 
     /**
