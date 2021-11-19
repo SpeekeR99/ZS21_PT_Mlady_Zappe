@@ -40,7 +40,7 @@ public class Main {
         if (args.length != 0) {
             filepath = args[0];
         } else {
-            filepath = "data/grid20.txt";
+            filepath = "data/fibonacci.txt";
         }
 
         Parser parser;

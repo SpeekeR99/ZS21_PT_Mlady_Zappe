@@ -55,21 +55,42 @@ public class FlightSimulator {
         graphFinished = null;
     }
 
+    //the state variables of graphs
+
+    /**
+     * Indicates what happens now and next
+     */
+    private FlightState event = FlightState.Start;
+    /**
+     * Current time
+     */
+    private double curTime = 0.0;
+    /**
+     * Departure of the plane
+     */
+    private double departure = -1.0;
+    /**
+     * The index of the horse currently at
+     */
+    private int curHorse = -1;
+    /**
+     * The closest horse and the next horse to fly to
+     */
+    private int closest = -1, next = -1;
+    /**
+     * Index of Paris
+     */
+    private final int PARIS = MetricsGraph.PARIS_INDEX;
+
     /**
      * Runs the simulation
      *
      * @param nodesInOrder ArrayList to be filled in for visualization
      */
     public void simulate(AbstractList<GraphNode> nodesInOrder) {
-        int PARIS = MetricsGraph.PARIS_INDEX;
+
         // Unused and causing PMD troubles :)
 //        int PLANE = MetricsGraph.PLANE_INDEX, HORSE_OFFSET = 2;
-
-        //the state variables of graphs
-        FlightState event = FlightState.Start; //indicates what happens now and next
-        double curTime = 0.0, departure = -1.0; //current time and departure of the plane
-        int curHorse = -1; //the index of the horse currently at
-        int closest = -1, next = -1; //the closest horse and the next horse to fly to
 
         boolean notDone = true;
 
@@ -82,71 +103,11 @@ public class FlightSimulator {
                 }
 
                 if (graphs[i].atHorse()) {
-                    curTime = graphs[i].getTime();
-                    curHorse = graphs[i].getCurrentlyAt();
-                    graphs[i].load(curHorse);
-                    departure = graphs[i].getTime(); //the .load() method above changed the time
-
-                    closest = algorithm.findNextClosestHorse(graphs[i]);
-
-                    if (closest == -1) {
-                        //in process and full ->
-                        //fly to unload in Paris
-                        event = FlightState.Naklad_A_Francie;
-                        next = PARIS;
-                        graphs[i].flyTo(PARIS);
-
-                        nodesInOrder.add(graphs[i].getParis());
-                    } else {
-                        //in process and can load moar ->
-                        //fly to the next one
-                        event = FlightState.Naklad_A_Dalsi;
-                        next = closest;
-                        graphs[i].flyTo(next);
-
-                        nodesInOrder.add(graphs[i].getHorse(next));
-                    }
-
-                    curHorse = graphs[i].getHorse(curHorse).index;
-
+                    atHorse(i, nodesInOrder);
                 } else if (graphs[i].atParis()) {
-                    curTime = graphs[i].getTime();
-                    curHorse = graphs[i].getCurrentlyAt(); //should be Paris
-                    graphs[i].unloadInParis();
-                    departure = graphs[i].getTime(); //method above updated the time
-
-                    if (graphs[i].allVisited()) {
-                        //finished
-                        event = FlightState.Konec;
-                        next = -1;
-                        graphFinished[i] = true;
-                    } else {
-                        //stopped in France to unload
-                        //-> fly to next closest horse
-                        event = FlightState.Francie_A_Dalsi;
-                        next = graphs[i].getNextClosestToParis();
-                        graphs[i].flyTo(next);
-
-                        nodesInOrder.add(graphs[i].getHorse(next));
-                    }
+                    atParis(i, nodesInOrder);
                 } else if (graphs[i].atStart()) {
-                    //at start -> only fly to a horse
-                    closest = algorithm.findNextClosestHorse(graphs[i]);
-
-                    event = FlightState.Start;
-                    curTime = graphs[i].getTime();
-                    curHorse = (int) graphs[i].getAirplane().x; //using curHorse and next variables to store planes position
-                    next = (int) graphs[i].getAirplane().y;
-
-                    if (closest == -1) {
-                        //no horses in graph, the airplane does not have to fly at all
-                        graphFinished[i] = true;
-                        continue;
-                    }
-
-                    graphs[i].flyTo(closest);
-
-                    nodesInOrder.add(graphs[i].getHorse(closest));
+                    atStart(i, nodesInOrder);
                 }
 
                 //  if(curHorse_isHorseIndex) curHorse = graphs[i].getHorse(curHorse).index;
@@ -158,6 +119,96 @@ public class FlightSimulator {
 
             }
         }
+    }
+
+    /**
+     * Plane is at Horse
+     *
+     * @param i            Iteration of for
+     * @param nodesInOrder Nodes in order for visuals
+     */
+    private void atHorse(int i, AbstractList<GraphNode> nodesInOrder) {
+        curTime = graphs[i].getTime();
+        curHorse = graphs[i].getCurrentlyAt();
+        graphs[i].load(curHorse);
+        departure = graphs[i].getTime(); //the .load() method above changed the time
+
+        closest = algorithm.findNextClosestHorse(graphs[i]);
+
+        if (closest == -1) {
+            //in process and full ->
+            //fly to unload in Paris
+            event = FlightState.Naklad_A_Francie;
+            next = PARIS;
+            graphs[i].flyTo(PARIS);
+
+            nodesInOrder.add(graphs[i].getParis());
+        } else {
+            //in process and can load moar ->
+            //fly to the next one
+            event = FlightState.Naklad_A_Dalsi;
+            next = closest;
+            graphs[i].flyTo(next);
+
+            nodesInOrder.add(graphs[i].getHorse(next));
+        }
+
+        curHorse = graphs[i].getHorse(curHorse).index;
+
+    }
+
+    /**
+     * Plane is at Paris
+     *
+     * @param i            Iteration of for
+     * @param nodesInOrder Nodes in order for visuals
+     */
+    private void atParis(int i, AbstractList<GraphNode> nodesInOrder) {
+        curTime = graphs[i].getTime();
+        curHorse = graphs[i].getCurrentlyAt(); //should be Paris
+        graphs[i].unloadInParis();
+        departure = graphs[i].getTime(); //method above updated the time
+
+        if (graphs[i].allVisited()) {
+            //finished
+            event = FlightState.Konec;
+            next = -1;
+            graphFinished[i] = true;
+        } else {
+            //stopped in France to unload
+            //-> fly to next closest horse
+            event = FlightState.Francie_A_Dalsi;
+            next = graphs[i].getNextClosestToParis();
+            graphs[i].flyTo(next);
+
+            nodesInOrder.add(graphs[i].getHorse(next));
+        }
+    }
+
+    /**
+     * Plane is at Start
+     *
+     * @param i            Iteration of for
+     * @param nodesInOrder Nodes in order for visuals
+     */
+    private void atStart(int i, AbstractList<GraphNode> nodesInOrder) {
+        //at start -> only fly to a horse
+        closest = algorithm.findNextClosestHorse(graphs[i]);
+
+        event = FlightState.Start;
+        curTime = graphs[i].getTime();
+        curHorse = (int) graphs[i].getAirplane().x; //using curHorse and next variables to store planes position
+        next = (int) graphs[i].getAirplane().y;
+
+        if (closest == -1) {
+            //no horses in graph, the airplane does not have to fly at all
+            graphFinished[i] = true;
+            return;
+        }
+
+        graphs[i].flyTo(closest);
+
+        nodesInOrder.add(graphs[i].getHorse(closest));
     }
 
     /**
