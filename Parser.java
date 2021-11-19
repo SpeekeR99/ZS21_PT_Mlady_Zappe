@@ -74,10 +74,12 @@ public class Parser {
                 }
                 line = br.readLine();
             }
+            br.close();
         } catch (IOException e) {
             System.out.println("Nastal problém při čtení ze souboru.");
             e.printStackTrace();
         }
+
         return inputData;
     }
 
