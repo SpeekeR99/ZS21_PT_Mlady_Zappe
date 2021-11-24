@@ -39,16 +39,10 @@ public class Main {
      * if arguments exist, it takes the first argument as filepath
      * if arguments weren't put in, it has some default filepath set
      *
-     * @param args arguments from cmd
+     * @param filepath path to the file
      * @return instance of src.Parser or NULL, based on if the file exists or not
      */
-    private static Parser createParser(String[] args) {
-        if (args.length != 0) {
-            filepath = args[0];
-        } else {
-            filepath = "data/generated10000.txt";
-        }
-
+    private static Parser createParser(String filepath) {
         Parser parser;
         try {
             parser = new Parser(filepath);
@@ -258,8 +252,34 @@ public class Main {
      *             Expecting first argument to be filepath to input file
      */
     public static void main(String[] args) {
-        // ini
-        Parser parser = createParser(args);
+        //init
+        String filepath = "";
+        if(args.length > 0){
+
+            try {
+
+                if (args[0].equals("F"))
+                    filepath = args[1];
+                else if (args[0].equals("G")) {
+                    filepath = args[1];
+                    Generator.main(filepath, args[2], args[3]);
+                }
+
+            }
+            catch (IndexOutOfBoundsException ex){
+                System.out.println("Wrong arguments format. Terminating.");
+                return;
+            }
+
+
+        }
+        else{
+            filepath = "generated_data.txt";
+            Generator.main(filepath,"100000","100");
+        }
+
+        // Parse
+        Parser parser = createParser(filepath);
         if (parser == null) {
             return;
         }

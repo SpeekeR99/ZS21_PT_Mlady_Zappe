@@ -19,7 +19,7 @@ public class Generator {
      *             second argument is expected to be the wanted number of horses
      *             third argument is expected to be the wanted number of airplanes
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         int numberOfHorses;
         int numberOfAirplanes;
         String filepath;
@@ -28,7 +28,7 @@ public class Generator {
             numberOfHorses = 1000;
             numberOfAirplanes = 5;
         } else {
-            filepath = "data/" + args[0];
+            filepath = args[0];
             numberOfHorses = Integer.parseInt(args[1]);
             numberOfAirplanes = Integer.parseInt(args[2]);
         }
