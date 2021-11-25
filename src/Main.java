@@ -252,8 +252,9 @@ public class Main {
      *             Expecting first argument to be filepath to input file
      */
     public static void main(String[] args) {
-        //init
+        //init: arguments and breakpoints
         String filepath = "";
+        int bp_index = 2;
         if(args.length > 0){
 
             try {
@@ -263,6 +264,7 @@ public class Main {
                 else if (args[0].equals("G")) {
                     filepath = args[1];
                     Generator.main(filepath, args[2], args[3]);
+                    bp_index = 4;
                 }
 
             }
@@ -270,13 +272,24 @@ public class Main {
                 System.out.println("Wrong arguments format. Terminating.");
                 return;
             }
-
-
         }
         else{
             filepath = "generated_data.txt";
             Generator.main(filepath,"100000","100");
+            bp_index = 0;
         }
+
+        IntQueue breakpoints = new IntQueue();
+        if(args.length > bp_index && args[bp_index].equals("-bp"))
+            for (int i = bp_index+1; i < args.length; i++) {
+                try{
+                    breakpoints.push(Integer.parseInt(args[i]));
+                }
+                catch (Exception x){
+                    System.out.printf("\"%s\" is not a whole number. Skipping.\n",args[i]);
+                }
+            }
+
 
         // Parse
         Parser parser = createParser(filepath);
@@ -320,6 +333,7 @@ public class Main {
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
 
         FlightSimulator sim = FlightSimulator.getSimulator(graph, algorithm);
+        sim.setBreakpoints(breakpoints.count() == 0 ? null : breakpoints);
         double olympicsStartTime;
         sc = new Scanner(System.in);
         System.out.println("Welcome!\nWould you like to run the whole simulation at once, or go step by step?\n(1 = step by step | 0 = at once)");
