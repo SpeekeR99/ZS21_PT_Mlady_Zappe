@@ -145,6 +145,7 @@ public class FlightSimulator {
                 //proc and adjust breakpoints
                 if(Math.round(curTime) >= next_bp){
                     localStep = true;
+                    System.out.println("Breakpoint found - switching to stepping mode. Type \"Next\" for next step or \"Finish\" to stop going step by step.");
                     next_bp = breakpoints.count() == 0 ? Long.MAX_VALUE : (long) breakpoints.pop();
                 }
             }
@@ -161,9 +162,9 @@ public class FlightSimulator {
     private boolean whatNowStep() {
         do {
             String input = keyboard.nextLine();
-            if (input.equals("Next") || input.equals("next")) {
+            if (input.equalsIgnoreCase("Next")) {
                 return true;
-            } else if (input.equals("Finish") || input.equals("finish")) {
+            } else if (input.equalsIgnoreCase("Finish")) {
                 return false;
             } else {
                 System.out.println("Unknown command.\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
