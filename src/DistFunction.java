@@ -29,12 +29,3 @@ class CartesianDist implements DistFunction {
     }
 }
 
-/**
- * Polar X, Y, Z, radius, angles... 3D
- */
-class PolarDist implements DistFunction {
-    @Override
-    public double dist(GraphNode a, GraphNode b) {
-        return 0;
-    }
-}

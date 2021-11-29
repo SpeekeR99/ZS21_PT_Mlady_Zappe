@@ -47,31 +47,6 @@ public class MinHeap {
     }
 
     /**
-     * like <code>pop()</code>, but does not remove the min
-     *
-     * @return the edge with the min weight
-     */
-    public HeapElement getMin() {
-        return heap[1];
-    }
-
-    /**
-     * @return the number of edges stored in the heap
-     */
-    public int count() {
-        return count;
-    }
-
-    /**
-     * size
-     *
-     * @return size of heap
-     */
-    public int size() {
-        return heap.length - 1;
-    }
-
-    /**
      * Correcting heap up
      *
      * @param n node
