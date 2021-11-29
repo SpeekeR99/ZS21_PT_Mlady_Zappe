@@ -61,9 +61,10 @@ public class FlightSimulator {
 
     /**
      * Passes the breakpoints into the simulator
+     *
      * @param breakpoints the breakpoints queue
      */
-    public void setBreakpoints(IntQueue breakpoints){
+    public void setBreakpoints(IntQueue breakpoints) {
         this.breakpoints = breakpoints;
     }
 
@@ -117,7 +118,7 @@ public class FlightSimulator {
             System.out.println("Welcome in simulation step by step!\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
         }
 
-        long next_bp = breakpoints==null ? Long.MAX_VALUE : (long) breakpoints.pop();
+        long next_bp = breakpoints == null ? Long.MAX_VALUE : (long) breakpoints.pop();
 
         keyboard = new Scanner(System.in);
         boolean notDone = true;
@@ -142,8 +143,8 @@ public class FlightSimulator {
                 System.out.println(formatOutput(event, Math.round(curTime), i, curHorse, Math.round(departure), next));
                 notDone = true;
 
-                //proc and adjust breakpoints
-                if(Math.round(curTime) >= next_bp){
+                // proc and adjust breakpoints
+                if (Math.round(curTime) >= next_bp) {
                     localStep = true;
                     System.out.println("Breakpoint found - switching to stepping mode. Type \"Next\" for next step or \"Finish\" to stop going step by step.");
                     next_bp = breakpoints.count() == 0 ? Long.MAX_VALUE : (long) breakpoints.pop();

@@ -29,10 +29,6 @@ public class Main {
      * Keyboard input
      */
     public static Scanner sc;
-    /**
-     * Input file
-     */
-    private static String filepath;
 
     /**
      * Creates instance of class src.Parser based on args
@@ -253,46 +249,48 @@ public class Main {
      * Entry point, start the app
      *
      * @param args arguments from cmd
-     *             Expecting first argument to be filepath to input file
+     *             Expecting first argument to be F or G
+     *             Next argument after F has to be filepath
+     *             Next arguments after G have to be filepath, number of horses, number of airplanes
+     *             (optional -br and breakpoints as integer values of time)
      */
     public static void main(String[] args) {
         //init: arguments and breakpoints
         String filepath = "";
         int bp_index = 2;
-        if(args.length > 0){
+        if (args.length > 0) {
 
             try {
 
-                if (args[0].equals("F"))
+                if (args[0].equals("F")) {
                     filepath = args[1];
+                }
                 else if (args[0].equals("G")) {
                     filepath = args[1];
                     Generator.main(filepath, args[2], args[3]);
                     bp_index = 4;
                 }
 
-            }
-            catch (IndexOutOfBoundsException ex){
+            } catch (IndexOutOfBoundsException ex) {
                 System.out.println("Wrong arguments format. Terminating.");
                 return;
             }
-        }
-        else{
+        } else {
             filepath = "generated_data.txt";
-            Generator.main(filepath,"100000","100");
+            Generator.main(filepath, "100000", "100");
             bp_index = 0;
         }
 
         IntQueue breakpoints = new IntQueue();
-        if(args.length > bp_index && args[bp_index].equals("-bp"))
-            for (int i = bp_index+1; i < args.length; i++) {
-                try{
+        if (args.length > bp_index && args[bp_index].equals("-bp")) {
+            for (int i = bp_index + 1; i < args.length; i++) {
+                try {
                     breakpoints.push(Integer.parseInt(args[i]));
-                }
-                catch (Exception x){
-                    System.out.printf("\"%s\" is not a whole number. Skipping.\n",args[i]);
+                } catch (Exception x) {
+                    System.out.printf("\"%s\" is not a whole number. Skipping.\n", args[i]);
                 }
             }
+        }
 
 
         // Parse
