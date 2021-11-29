@@ -78,8 +78,7 @@ public class Parser {
             }
             br.close();
         } catch (IOException e) {
-            System.out.println("Nastal problém při čtení ze souboru.");
-            e.printStackTrace();
+            System.out.println("ERROR: There was an error with opening the input file.\nFile might not exist!");
         }
 
         return inputData;

@@ -111,7 +111,7 @@ public class Main {
      * @param nodesInOrder  nodes in order of simulation
      * @param visualization true if window should open up, false otherwise
      */
-    private static void visulize(AbstractList<GraphNode> nodesInOrder, boolean visualization) {
+    private static void visualize(AbstractList<GraphNode> nodesInOrder, boolean visualization) {
         if (!visualization) {
             return;
         }
@@ -157,6 +157,10 @@ public class Main {
             double y = data.get(i + 4);
             double weight = data.get(i + 5);
             double time = data.get(i + 6);
+            if (time < 0 || weight < 0) {
+                System.out.println("ERROR: There is a Horse with negative time or weight!");
+                System.exit(1);
+            }
             Horse horse = new Horse(x, y, weight, time);
             horse.index = i / 4;
             // Do something with the horse here | add to the graph or something
@@ -353,7 +357,7 @@ public class Main {
         System.out.printf("Celkem prepraveno %d koni.", numberOfHorses);
 
         // visualization
-        visulize(nodesInOrder, visualization);
+        visualize(nodesInOrder, visualization);
 
         //statistics
         Statistics stats = new Statistics(airplanes, nodesInOrder, olympicsStartTime, filepath);
