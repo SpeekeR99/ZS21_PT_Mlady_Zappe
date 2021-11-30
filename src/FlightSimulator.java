@@ -118,7 +118,7 @@ public class FlightSimulator {
             System.out.println("Welcome in simulation step by step!\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
         }
 
-        long next_bp = breakpoints == null ? Long.MAX_VALUE : (long) breakpoints.pop();
+        long next_bp = avoidCyclomaticComplexity();
 
         keyboard = new Scanner(System.in);
         boolean notDone = true;
@@ -153,6 +153,14 @@ public class FlightSimulator {
         }
         keyboard.close();
         return curTime;
+    }
+
+    /**
+     * PMD Clean code, just to avoid Cyclomatic Complexity of 10
+     * @return Long MAX_VALUE or first breakpoint from breakpoints queue
+     */
+    private long avoidCyclomaticComplexity() {
+        return breakpoints == null ? Long.MAX_VALUE : (long) breakpoints.pop();
     }
 
     /**

@@ -246,6 +246,60 @@ public class Main {
     }
 
     /**
+     * Reads arguments from command line
+     * Checks if their in proper order
+     * Also checks if breakpoints are set or not
+     *
+     * @param args arguments from cmd
+     * @return Object array consisting of bp_index on index 0 and filepath on index 1
+     */
+    private static Object[] readArguments(String[] args) {
+        int bp_index = 2;
+        String filepath = "";
+        if (args.length > 0) {
+
+            try {
+
+                if (args[0].equals("F")) {
+                    filepath = args[1];
+                } else if (args[0].equals("G")) {
+                    filepath = args[1];
+                    Generator.main(filepath, args[2], args[3]);
+                    bp_index = 4;
+                }
+
+            } catch (IndexOutOfBoundsException ex) {
+                System.out.println("Wrong arguments format. Terminating.");
+                System.exit(1);
+            }
+        } else {
+            filepath = "generated_data.txt";
+            Generator.main(filepath, "100000", "100");
+            bp_index = 0;
+        }
+        return new Object[]{bp_index, filepath};
+    }
+
+    /**
+     * Sets up the breakpoints, if there were any, as input from user from cmd
+     *
+     * @param breakpoints Queue of breakpoints
+     * @param bp_index    index of breakpoint
+     * @param args        arguments from cmd
+     */
+    private static void addBreakPoints(IntQueue breakpoints, int bp_index, String[] args) {
+        if (args.length > bp_index && args[bp_index].equals("-bp")) {
+            for (int i = bp_index + 1; i < args.length; i++) {
+                try {
+                    breakpoints.push(Integer.parseInt(args[i]));
+                } catch (Exception x) {
+                    System.out.printf("\"%s\" is not a whole number. Skipping.\n", args[i]);
+                }
+            }
+        }
+    }
+
+    /**
      * Entry point, start the app
      *
      * @param args arguments from cmd
@@ -256,42 +310,11 @@ public class Main {
      */
     public static void main(String[] args) {
         //init: arguments and breakpoints
-        String filepath = "";
-        int bp_index = 2;
-        if (args.length > 0) {
-
-            try {
-
-                if (args[0].equals("F")) {
-                    filepath = args[1];
-                }
-                else if (args[0].equals("G")) {
-                    filepath = args[1];
-                    Generator.main(filepath, args[2], args[3]);
-                    bp_index = 4;
-                }
-
-            } catch (IndexOutOfBoundsException ex) {
-                System.out.println("Wrong arguments format. Terminating.");
-                return;
-            }
-        } else {
-            filepath = "generated_data.txt";
-            Generator.main(filepath, "100000", "100");
-            bp_index = 0;
-        }
-
+        Object[] array = readArguments(args);
+        int bp_index = (int) array[0];
+        String filepath = (String) array[1];
         IntQueue breakpoints = new IntQueue();
-        if (args.length > bp_index && args[bp_index].equals("-bp")) {
-            for (int i = bp_index + 1; i < args.length; i++) {
-                try {
-                    breakpoints.push(Integer.parseInt(args[i]));
-                } catch (Exception x) {
-                    System.out.printf("\"%s\" is not a whole number. Skipping.\n", args[i]);
-                }
-            }
-        }
-
+        addBreakPoints(breakpoints, bp_index, args);
 
         // Parse
         Parser parser = createParser(filepath);
