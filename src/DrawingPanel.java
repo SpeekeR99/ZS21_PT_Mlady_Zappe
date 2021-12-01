@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Simple visualization
@@ -46,6 +48,18 @@ public class DrawingPanel extends JPanel {
      * If being verbose in console is wanted or not
      */
     final boolean print;
+    /**
+     * Unique airplanes for unique coloring
+     */
+    AbstractList<Aircraft> uniqueAirplanes;
+    /**
+     * Unique colors for unique airplanes
+     */
+    AbstractList<Color> uniqueColors;
+    /**
+     * Random for unique colors
+     */
+    Random rand;
 
     /**
      * Constructor sets needed values
@@ -62,6 +76,10 @@ public class DrawingPanel extends JPanel {
         setRelatives(width, height);
         curHorseIndex = 0;
         this.print = print;
+        uniqueAirplanes = new ArrayList<>();
+        uniqueColors = new ArrayList<>();
+        addBasicColors();
+        rand = new Random();
     }
 
     @Override
@@ -91,6 +109,10 @@ public class DrawingPanel extends JPanel {
 
         GraphNode cur = nodesInOrder.get(curHorseIndex);
         GraphNode next = nodesInOrder.get(curHorseIndex + 1);
+
+        Aircraft aircraft = setUpUniqueColorForDrawing(cur, next);
+        g2.setColor(uniqueColors.get(uniqueAirplanes.indexOf(aircraft)));
+
         Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
         g2.draw(line);
         if (print) {
@@ -98,6 +120,57 @@ public class DrawingPanel extends JPanel {
         }
 
         return false;
+    }
+
+    /**
+     * Sets up unique color for each unique aircraft
+     * @param cur current graph node (in case this is paris, next is going to be horse)
+     * @param next next graph node (for case cur was paris, this is going to be horse)
+     * @return Aircraft that took "current" (possibly next) horse
+     */
+    private Aircraft setUpUniqueColorForDrawing(GraphNode cur, GraphNode next) {
+        Aircraft temp = new Aircraft(0, 0, 0, 0); // Temp init
+        if (cur instanceof Horse) {
+            temp = ((Horse) cur).transportedBy;
+        } else if (next instanceof Horse) {
+            temp = ((Horse) next).transportedBy;
+        }
+        boolean uniq = true;
+        for (Aircraft other : uniqueAirplanes) {
+            if (temp.equals(other)) {
+                uniq = false;
+                break;
+            }
+        }
+        if (uniq) {
+            uniqueAirplanes.add(temp);
+            if (uniqueAirplanes.size() > uniqueColors.size()) {
+                uniqueColors.add(new Color(rand.nextFloat(), rand.nextFloat() / 2f, rand.nextFloat() / 2f));
+            }
+        }
+        return temp;
+    }
+
+    /**
+     * Adds basic 15 colors to color palette
+     */
+    private void addBasicColors() {
+        uniqueColors.add(new Color(255, 0, 0));
+        uniqueColors.add(new Color(0, 255, 0));
+        uniqueColors.add(new Color(0, 0, 255));
+        uniqueColors.add(new Color(255, 255, 0));
+        uniqueColors.add(new Color(255, 0, 255));
+        uniqueColors.add(new Color(0, 255, 255));
+        uniqueColors.add(new Color(255, 128, 0));
+        uniqueColors.add(new Color(255, 0, 128));
+        uniqueColors.add(new Color(128, 255, 0));
+        uniqueColors.add(new Color(0, 255, 128));
+        uniqueColors.add(new Color(128, 0, 255));
+        uniqueColors.add(new Color(0, 128, 255));
+        uniqueColors.add(new Color(255, 128, 128));
+        uniqueColors.add(new Color(128, 255, 128));
+        uniqueColors.add(new Color(128, 128, 255));
+        uniqueColors.add(new Color(128, 128, 128));
     }
 
     /**

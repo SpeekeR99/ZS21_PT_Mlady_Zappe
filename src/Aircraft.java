@@ -2,6 +2,7 @@ package src;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Class represents an src.Aircraft that exports horses
@@ -91,6 +92,26 @@ public class Aircraft extends GraphNode {
      */
     public void unload() {
         currCapacity = 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Aircraft aircraft = (Aircraft) o;
+        return Double.compare(aircraft.weightCapacity, weightCapacity) == 0 && Double.compare(aircraft.speed, speed) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), weightCapacity, speed);
     }
 
     /**
