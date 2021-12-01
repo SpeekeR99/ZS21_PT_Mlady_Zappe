@@ -13,9 +13,9 @@ import java.util.Random;
 public class DrawingPanel extends JPanel {
 
     /**
-     * Horses in order of being picked up
+     * Array of horses in order of being picked up, indexed by airplane
      */
-    AbstractList<GraphNode> nodesInOrder;
+    ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane;
     /**
      * Minimal value of X
      */
@@ -41,17 +41,9 @@ public class DrawingPanel extends JPanel {
      */
     double relativeY;
     /**
-     * Index of current horse
-     */
-    int curHorseIndex;
-    /**
      * If being verbose in console is wanted or not
      */
     final boolean print;
-    /**
-     * Unique airplanes for unique coloring
-     */
-    AbstractList<Aircraft> uniqueAirplanes;
     /**
      * Unique colors for unique airplanes
      */
@@ -64,22 +56,20 @@ public class DrawingPanel extends JPanel {
     /**
      * Constructor sets needed values
      *
-     * @param nodesInOrder Horses in order of being picked up
-     * @param print        if being verbose is wanted
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
+     * @param print                         if being verbose is wanted
      */
-    public DrawingPanel(AbstractList<GraphNode> nodesInOrder, boolean print) {
+    public DrawingPanel(ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean print) {
         int width = 1000;
         int height = 1000;
         this.setPreferredSize(new Dimension(width, height));
-        this.nodesInOrder = nodesInOrder;
+        this.nodesInOrderOrderedByAirplane = nodesInOrderOrderedByAirplane;
         calculateMinMaxes();
         setRelatives(width, height);
-        curHorseIndex = 0;
         this.print = print;
-        uniqueAirplanes = new ArrayList<>();
         uniqueColors = new ArrayList<>();
-        addBasicColors();
         rand = new Random();
+        setUpUniqueColorForDrawing();
     }
 
     @Override
@@ -88,68 +78,38 @@ public class DrawingPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(1));
         g2.setFont(new Font("Times New Roman", Font.PLAIN, 21));
-        g2.drawString("START", (float) (nodesInOrder.get(0).x - minX * relativeX), (float) (nodesInOrder.get(0).y - minY * relativeY));
+        for (int i = 0; i < nodesInOrderOrderedByAirplane.length; i++) {
+            g2.setColor(uniqueColors.get(i));
+            drawFlight(g2, nodesInOrderOrderedByAirplane[i]);
+        }
     }
 
     /**
      * Draws line between representing a flight
      *
-     * @param g the graphics context
-     * @return true, if al flights are drawn, else returns false
+     * @param g2           the graphics context
+     * @param nodesInOrder Horses in order of being picked up by given airplane
      */
-    public boolean drawFlight(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-
-        g2.setColor(Color.RED);
-
-        curHorseIndex++;
-        if (curHorseIndex >= nodesInOrder.size() - 1) {
-            return true;
+    public void drawFlight(Graphics2D g2, ArrayList<GraphNode> nodesInOrder) {
+        for (int i = 0; i < nodesInOrder.size() - 1; i++) {
+            GraphNode cur = nodesInOrder.get(i);
+            GraphNode next = nodesInOrder.get(i + 1);
+            Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
+            g2.draw(line);
+            if (print) {
+                System.out.println((cur instanceof Horse ? ((Horse) cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
+            }
         }
-
-        GraphNode cur = nodesInOrder.get(curHorseIndex);
-        GraphNode next = nodesInOrder.get(curHorseIndex + 1);
-
-        Aircraft aircraft = setUpUniqueColorForDrawing(cur, next);
-        g2.setColor(uniqueColors.get(uniqueAirplanes.indexOf(aircraft)));
-
-        Shape line = new Line2D.Double((cur.x - minX) * relativeX, (cur.y - minY) * relativeY, (next.x - minX) * relativeX, (next.y - minY) * relativeY);
-        g2.draw(line);
-        if (print) {
-            System.out.println((cur instanceof Horse ? ((Horse) cur).index : "Paris") + " | x = " + cur.x + " y = " + cur.y);
-        }
-
-        return false;
     }
 
     /**
      * Sets up unique color for each unique aircraft
-     *
-     * @param cur  current graph node (in case this is paris, next is going to be horse)
-     * @param next next graph node (for case cur was paris, this is going to be horse)
-     * @return Aircraft that took "current" (possibly next) horse
      */
-    private Aircraft setUpUniqueColorForDrawing(GraphNode cur, GraphNode next) {
-        Aircraft temp = new Aircraft(0, 0, 0, 0); // Temp init
-        if (cur instanceof Horse) {
-            temp = ((Horse) cur).transportedBy;
-        } else if (next instanceof Horse) {
-            temp = ((Horse) next).transportedBy;
+    private void setUpUniqueColorForDrawing() {
+        addBasicColors();
+        while (nodesInOrderOrderedByAirplane.length > uniqueColors.size()) {
+            uniqueColors.add(new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
         }
-        boolean uniq = true;
-        for (Aircraft other : uniqueAirplanes) {
-            if (temp.equals(other)) {
-                uniq = false;
-                break;
-            }
-        }
-        if (uniq) {
-            uniqueAirplanes.add(temp);
-            if (uniqueAirplanes.size() > uniqueColors.size()) {
-                uniqueColors.add(new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
-            }
-        }
-        return temp;
     }
 
     /**
@@ -182,18 +142,20 @@ public class DrawingPanel extends JPanel {
         minY = Double.MAX_VALUE;
         maxX = -Double.MAX_VALUE;
         maxY = -Double.MAX_VALUE;
-        for (GraphNode h : nodesInOrder) {
-            if (h.x > maxX) {
-                maxX = h.x;
-            }
-            if (h.x < minX) {
-                minX = h.x;
-            }
-            if (h.y > maxY) {
-                maxY = h.y;
-            }
-            if (h.y < minY) {
-                minY = h.y;
+        for (ArrayList<GraphNode> nodesInOrder : nodesInOrderOrderedByAirplane) {
+            for (GraphNode h : nodesInOrder) {
+                if (h.x > maxX) {
+                    maxX = h.x;
+                }
+                if (h.x < minX) {
+                    minX = h.x;
+                }
+                if (h.y > maxY) {
+                    maxY = h.y;
+                }
+                if (h.y < minY) {
+                    minY = h.y;
+                }
             }
         }
         if (!print) {

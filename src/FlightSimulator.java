@@ -1,6 +1,7 @@
 package src;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -108,11 +109,12 @@ public class FlightSimulator {
     /**
      * Runs the simulation
      *
-     * @param nodesInOrder ArrayList to be filled in for visualization
-     * @param stepping     If user wants to go step by step in simulation
+     * @param nodesInOrder                  ArrayList to be filled in for statistics
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
+     * @param stepping                      If user wants to go step by step in simulation
      * @return Starting time of Olympic games
      */
-    public double simulate(AbstractList<GraphNode> nodesInOrder, boolean stepping) {
+    public double simulate(AbstractList<GraphNode> nodesInOrder, ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean stepping) {
         boolean localStep = stepping;
         if (localStep) {
             System.out.println("Welcome in simulation step by step!\nPlease input \"Next\" for next step or \"Finish\" to stop going step by step.");
@@ -135,7 +137,7 @@ public class FlightSimulator {
                     continue;
                 }
 
-                if (doNextStep(i, nodesInOrder)) {
+                if (doNextStep(i, nodesInOrder, nodesInOrderOrderedByAirplane)) {
                     continue;
                 }
 
@@ -185,17 +187,18 @@ public class FlightSimulator {
     /**
      * Decides what is the next step to be done by the plane
      *
-     * @param i            Iteration of for loop
-     * @param nodesInOrder Nodes in order for visuals
+     * @param i                             Iteration of for loop
+     * @param nodesInOrder                  Nodes in order for visuals
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      * @return True if for loop is to be continued
      */
-    private boolean doNextStep(int i, AbstractList<GraphNode> nodesInOrder) {
+    private boolean doNextStep(int i, AbstractList<GraphNode> nodesInOrder, ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane) {
         if (graphs[i].atHorse()) {
-            atHorse(i, nodesInOrder);
+            atHorse(i, nodesInOrder, nodesInOrderOrderedByAirplane);
         } else if (graphs[i].atParis()) {
-            atParis(i, nodesInOrder);
+            atParis(i, nodesInOrder, nodesInOrderOrderedByAirplane);
         } else if (graphs[i].atStart()) {
-            return atStart(i, nodesInOrder);
+            return atStart(i, nodesInOrder, nodesInOrderOrderedByAirplane);
         }
         return false;
     }
@@ -203,10 +206,11 @@ public class FlightSimulator {
     /**
      * Plane is at src.Horse
      *
-     * @param i            Iteration of for
-     * @param nodesInOrder Nodes in order for visuals
+     * @param i                             Iteration of for
+     * @param nodesInOrder                  Nodes in order for visuals
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      */
-    private void atHorse(int i, AbstractList<GraphNode> nodesInOrder) {
+    private void atHorse(int i, AbstractList<GraphNode> nodesInOrder, ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane) {
         curTime = graphs[i].getTime();
         curHorse = graphs[i].getCurrentlyAt();
         graphs[i].load(curHorse);
@@ -228,6 +232,7 @@ public class FlightSimulator {
             graphs[i].flyTo(PARIS);
 
             nodesInOrder.add(graphs[i].getParis());
+            nodesInOrderOrderedByAirplane[i].add(graphs[i].getParis());
         } else {
             //in process and can load moar ->
             //fly to the next one
@@ -236,6 +241,7 @@ public class FlightSimulator {
             graphs[i].flyTo(next);
 
             nodesInOrder.add(graphs[i].getHorse(next));
+            nodesInOrderOrderedByAirplane[i].add(graphs[i].getHorse(next));
             next = graphs[i].getHorse(next).index;
         }
 
@@ -246,10 +252,11 @@ public class FlightSimulator {
     /**
      * Plane is at Paris
      *
-     * @param i            Iteration of for
-     * @param nodesInOrder Nodes in order for visuals
+     * @param i                             Iteration of for
+     * @param nodesInOrder                  Nodes in order for visuals
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      */
-    private void atParis(int i, AbstractList<GraphNode> nodesInOrder) {
+    private void atParis(int i, AbstractList<GraphNode> nodesInOrder, ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane) {
         curTime = graphs[i].getTime();
         curHorse = graphs[i].getCurrentlyAt(); //should be Paris
         for (Horse h : graphs[i].getAirplane().loadedHorses) {
@@ -272,6 +279,7 @@ public class FlightSimulator {
             graphs[i].flyTo(next);
 
             nodesInOrder.add(graphs[i].getHorse(next));
+            nodesInOrderOrderedByAirplane[i].add(graphs[i].getHorse(next));
             next = graphs[i].getHorse(next).index;
         }
     }
@@ -279,11 +287,12 @@ public class FlightSimulator {
     /**
      * Plane is at Start
      *
-     * @param i            Iteration of for
-     * @param nodesInOrder Nodes in order for visuals
+     * @param i                             Iteration of for
+     * @param nodesInOrder                  Nodes in order for visuals
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      * @return true if continue was in the original for loop
      */
-    private boolean atStart(int i, AbstractList<GraphNode> nodesInOrder) {
+    private boolean atStart(int i, AbstractList<GraphNode> nodesInOrder, ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane) {
         //at start -> only fly to a horse
         closest = algorithm.findNextClosestHorse(graphs[i]);
 
@@ -301,6 +310,7 @@ public class FlightSimulator {
         graphs[i].flyTo(closest);
 
         nodesInOrder.add(graphs[i].getHorse(closest));
+        nodesInOrderOrderedByAirplane[i].add(graphs[i].getHorse(closest));
         return false;
     }
 

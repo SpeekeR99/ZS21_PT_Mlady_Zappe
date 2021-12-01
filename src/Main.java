@@ -1,7 +1,6 @@
 package src;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -104,37 +103,22 @@ public class Main {
     /**
      * Basic primitive visualization of airplane's flight
      *
-     * @param nodesInOrder  nodes in order of simulation
+     * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      * @param visualization true if window should open up, false otherwise
      */
-    private static void visualize(AbstractList<GraphNode> nodesInOrder, boolean visualization) {
+    private static void visualize(ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean visualization) {
         if (!visualization) {
             return;
         }
-        java.util.Timer timer = new java.util.Timer();
-
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
-        DrawingPanel panel = new DrawingPanel(nodesInOrder, false);
+        DrawingPanel panel = new DrawingPanel(nodesInOrderOrderedByAirplane, false);
         window.add(panel);
         window.pack();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-
-        Graphics winGraph = panel.getGraphics();
-
-        //( (Graphics2D)winGraph ).translate((double)panel.getWidth()/2 - paris.x,  (double)panel.getHeight()/2 - (paris.y));
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (panel.drawFlight(winGraph)) {
-                    timer.cancel();
-                }
-            }
-        }, 0L, 5L);
     }
 
     /**
@@ -354,6 +338,11 @@ public class Main {
         graph = assignHorsesToAirplanes(airplanes, horsesList, paris);
         horsesList = null; //the method above emptied the List, setting to null to avoid mem leak
 
+//        ArrayList<ArrayList<GraphNode>> nodesInOrderOrderedByAirplane = new ArrayList<>(numberOfAircrafts);
+        ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane = new ArrayList[numberOfAircrafts];
+        for (int i = 0; i < numberOfAircrafts; i++) {
+            nodesInOrderOrderedByAirplane[i] = new ArrayList<>();
+        }
         ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
 
@@ -365,10 +354,10 @@ public class Main {
         do {
             String input = sc.nextLine();
             if (input.equals("1")) {
-                olympicsStartTime = sim.simulate(nodesInOrder, true);
+                olympicsStartTime = sim.simulate(nodesInOrder, nodesInOrderOrderedByAirplane, true);
                 break;
             } else if (input.equals("0")) {
-                olympicsStartTime = sim.simulate(nodesInOrder, false);
+                olympicsStartTime = sim.simulate(nodesInOrder, nodesInOrderOrderedByAirplane, false);
                 break;
             } else {
                 System.out.println("Unknown input!\nPlease input \"1\" or \"0\"");
@@ -378,7 +367,7 @@ public class Main {
         System.out.printf("Celkem prepraveno %d koni.", numberOfHorses);
 
         // visualization
-        visualize(nodesInOrder, visualization);
+        visualize(nodesInOrderOrderedByAirplane, visualization);
 
         //statistics
         Statistics stats = new Statistics(airplanes, nodesInOrder, olympicsStartTime, filepath);
