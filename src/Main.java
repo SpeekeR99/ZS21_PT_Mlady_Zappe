@@ -43,8 +43,7 @@ public class Main {
             parser = new Parser(filepath);
             return parser;
         } catch (FileNotFoundException e) {
-            System.out.println("Chyba při načítání souboru:");
-            e.printStackTrace();
+            System.out.println("ERROR: There was an error with opening the input file.\nFile might not exist!");
             return null;
         }
     }
