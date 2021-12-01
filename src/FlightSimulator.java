@@ -157,6 +157,7 @@ public class FlightSimulator {
 
     /**
      * PMD Clean code, just to avoid Cyclomatic Complexity of 10
+     *
      * @return Long MAX_VALUE or first breakpoint from breakpoints queue
      */
     private long avoidCyclomaticComplexity() {

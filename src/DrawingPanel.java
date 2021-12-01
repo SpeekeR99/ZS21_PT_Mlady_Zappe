@@ -124,7 +124,8 @@ public class DrawingPanel extends JPanel {
 
     /**
      * Sets up unique color for each unique aircraft
-     * @param cur current graph node (in case this is paris, next is going to be horse)
+     *
+     * @param cur  current graph node (in case this is paris, next is going to be horse)
      * @param next next graph node (for case cur was paris, this is going to be horse)
      * @return Aircraft that took "current" (possibly next) horse
      */
