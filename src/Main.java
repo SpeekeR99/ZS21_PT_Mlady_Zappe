@@ -104,7 +104,7 @@ public class Main {
      * Basic primitive visualization of airplane's flight
      *
      * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
-     * @param visualization true if window should open up, false otherwise
+     * @param visualization                 true if window should open up, false otherwise
      */
     private static void visualize(AbstractList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean visualization) {
         if (!visualization) {
