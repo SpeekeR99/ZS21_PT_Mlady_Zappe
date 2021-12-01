@@ -146,7 +146,7 @@ public class DrawingPanel extends JPanel {
         if (uniq) {
             uniqueAirplanes.add(temp);
             if (uniqueAirplanes.size() > uniqueColors.size()) {
-                uniqueColors.add(new Color(rand.nextFloat(), rand.nextFloat() / 2f, rand.nextFloat() / 2f));
+                uniqueColors.add(new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
             }
         }
         return temp;
