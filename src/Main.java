@@ -112,6 +112,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setTitle("Visuals");
         window.setSize(1000, 1000);
+        window.setResizable(false);
         DrawingPanel panel = new DrawingPanel(nodesInOrderOrderedByAirplane, false);
         window.add(panel);
         window.pack();
