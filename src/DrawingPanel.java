@@ -77,7 +77,6 @@ public class DrawingPanel extends JPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(1));
-        g2.setFont(new Font("Times New Roman", Font.PLAIN, 21));
         for (int i = 0; i < nodesInOrderOrderedByAirplane.length; i++) {
             g2.setColor(uniqueColors.get(i));
             drawFlight(g2, nodesInOrderOrderedByAirplane[i]);
@@ -90,7 +89,7 @@ public class DrawingPanel extends JPanel {
      * @param g2           the graphics context
      * @param nodesInOrder Horses in order of being picked up by given airplane
      */
-    public void drawFlight(Graphics2D g2, ArrayList<GraphNode> nodesInOrder) {
+    public void drawFlight(Graphics2D g2, AbstractList<GraphNode> nodesInOrder) {
         for (int i = 0; i < nodesInOrder.size() - 1; i++) {
             GraphNode cur = nodesInOrder.get(i);
             GraphNode next = nodesInOrder.get(i + 1);
