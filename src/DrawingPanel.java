@@ -15,7 +15,7 @@ public class DrawingPanel extends JPanel {
     /**
      * Array of horses in order of being picked up, indexed by airplane
      */
-    ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane;
+    AbstractList<GraphNode>[] nodesInOrderOrderedByAirplane;
     /**
      * Minimal value of X
      */
@@ -59,7 +59,7 @@ public class DrawingPanel extends JPanel {
      * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      * @param print                         if being verbose is wanted
      */
-    public DrawingPanel(ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean print) {
+    public DrawingPanel(AbstractList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean print) {
         int width = 1000;
         int height = 1000;
         this.setPreferredSize(new Dimension(width, height));
@@ -141,7 +141,7 @@ public class DrawingPanel extends JPanel {
         minY = Double.MAX_VALUE;
         maxX = -Double.MAX_VALUE;
         maxY = -Double.MAX_VALUE;
-        for (ArrayList<GraphNode> nodesInOrder : nodesInOrderOrderedByAirplane) {
+        for (AbstractList<GraphNode> nodesInOrder : nodesInOrderOrderedByAirplane) {
             for (GraphNode h : nodesInOrder) {
                 if (h.x > maxX) {
                     maxX = h.x;

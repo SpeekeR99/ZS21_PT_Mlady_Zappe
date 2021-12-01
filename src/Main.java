@@ -106,7 +106,7 @@ public class Main {
      * @param nodesInOrderOrderedByAirplane Array of horses in order of being picked up, indexed by airplane
      * @param visualization true if window should open up, false otherwise
      */
-    private static void visualize(ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean visualization) {
+    private static void visualize(AbstractList<GraphNode>[] nodesInOrderOrderedByAirplane, boolean visualization) {
         if (!visualization) {
             return;
         }
@@ -165,7 +165,7 @@ public class Main {
     private static MetricsGraph[] assignHorsesToAirplanes(Aircraft[] airplanes, AbstractList<Horse> horsesList, GraphNode paris) {
         MetricsGraph[] graphs = new MetricsGraph[airplanes.length];
         int[] horseIndices;
-        ArrayList<Horse> horses;
+        AbstractList<Horse> horses;
 
         for (int i = 0; i < airplanes.length - 1; i++) {
             horses = new ArrayList<>();
@@ -338,12 +338,11 @@ public class Main {
         graph = assignHorsesToAirplanes(airplanes, horsesList, paris);
         horsesList = null; //the method above emptied the List, setting to null to avoid mem leak
 
-//        ArrayList<ArrayList<GraphNode>> nodesInOrderOrderedByAirplane = new ArrayList<>(numberOfAircrafts);
-        ArrayList<GraphNode>[] nodesInOrderOrderedByAirplane = new ArrayList[numberOfAircrafts];
+        AbstractList<GraphNode>[] nodesInOrderOrderedByAirplane = new ArrayList[numberOfAircrafts];
         for (int i = 0; i < numberOfAircrafts; i++) {
             nodesInOrderOrderedByAirplane[i] = new ArrayList<>();
         }
-        ArrayList<GraphNode> nodesInOrder = new ArrayList<>();
+        AbstractList<GraphNode> nodesInOrder = new ArrayList<>();
         ClosestNeighbourPath algorithm = new ClosestNeighbourPath();
 
         FlightSimulator sim = FlightSimulator.getSimulator(graph, algorithm);
