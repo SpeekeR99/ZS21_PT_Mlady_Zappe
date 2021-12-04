@@ -1,5 +1,3 @@
-package src;
-
 /**
  * A diety that lives in a metrics system
  * (a space, where distance function exists)

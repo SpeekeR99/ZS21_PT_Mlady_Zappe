@@ -1,5 +1,3 @@
-package src;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 

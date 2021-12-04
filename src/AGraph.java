@@ -1,5 +1,3 @@
-package src;
-
 /**
  * A complete undirected weighted graph with the edge weights being equal to the planar or cartesian
  * distance of two nodes
