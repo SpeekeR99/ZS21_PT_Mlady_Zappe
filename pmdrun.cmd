@@ -1,0 +1,1 @@
+FOR %%i IN (src/*.java) DO pmd -R pmdrules.xml -f text -d src/%%i

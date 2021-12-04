@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<ruleset name="quickstart"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>Pravidla pro KIV/PT,Z.Majdisova 28.11.2019, aktualizovana verze predchozich pravidel pro KIV/PT (lehce modifikovana z P.Herout - pravidla pro KIV/OOP, 20.5.2019 pro PMD 6.14.0)</description>
+	
+	<rule ref="category/java/errorprone.xml/JumbledIncrementer" message="Nepouzivejte iteracni promennou vnejsiho cyklu v podmince vnitrniho cyklu"/>
+	<rule ref="category/java/codestyle.xml/ForLoopShouldBeWhileLoop" message="Tento cyklus 'for' by byl prehlednejsi jako 'while'"/>
+	<rule ref="category/java/errorprone.xml/ReturnFromFinallyBlock" message="V bloku 'finnaly' nepouzivejte prikaz 'return' - ztraceji se vyjimky."/>
+	<rule ref="category/java/errorprone.xml/UnconditionalIfStatement" message="Nepouzivejte prikaz 'if' pokud vysledek podminky je vzdy true ci false"/>
+	<rule ref="category/java/performance.xml/BooleanInstantiation" message="Nevytvarejte instance tridy Boolean; vetsinou je vyhodnejsi pouzit metodu Boolean.valueOf()."/>
+	<rule ref="category/java/design.xml/CollapsibleIfStatements" message="Doporucujeme spojit dva prikazy if do jednoho se spojenim podminek."/>
+	<rule ref="category/java/errorprone.xml/AvoidDecimalLiteralsInBigDecimalConstructor" message="Nevytvarejte instance BigDecimal s konstantou typu double ci float. Pouzijte String."/>
+	
+	<rule ref="category/java/errorprone.xml/MisplacedNullCheck" message="Chybne umistena kontrola na null; pred provedenim kontroly vznikne NullPointerException."/>
+	<rule ref="category/java/errorprone.xml/BrokenNullCheck" message="Kontrola na null neni dostatecna, stale muze vzniknout NullPointerException (pravdepodobne zamena || a &amp;&amp;).."/>
+	<rule ref="category/java/performance.xml/BigIntegerInstantiation" message="Nevytvarejte instance jiz existujicich hodnot (ZERO, ONE, TEN)."/>
+	<rule ref="category/java/errorprone.xml/AvoidUsingOctalValues" message="Nepouzivejte ciselne konstanty zacinajici 0. Jsou interpretovany jako oktalove."/>
+	<rule ref="category/java/errorprone.xml/AvoidMultipleUnaryOperators" message="Vice unarnich operatoru za sebou je pravdepodobne chyba (minimalne je to neprehledne)."/>
+	
+	<rule ref="category/java/errorprone.xml/EmptyCatchBlock" message="Nepouzivejte prazdne bloky 'catch'"/>
+	<rule ref="category/java/errorprone.xml/EmptyIfStmt" message="Nepouzivejte prazdne bloky 'if'"/>
+	<rule ref="category/java/errorprone.xml/EmptyWhileStmt" message="Nepouzivejte prazdne cykly 'while'"/>
+	<rule ref="category/java/errorprone.xml/EmptyTryBlock" message="Nepouzivejte prazdne bloky 'try'"/> 
+	<rule ref="category/java/errorprone.xml/EmptyFinallyBlock" message="Nepouzivejte prazdne bloky 'finally'"/>
+	<rule ref="category/java/errorprone.xml/EmptySwitchStatements" message="Nepouzivejte prazdne prikazy 'switch'"/>
+	<rule ref="category/java/errorprone.xml/EmptyInitializer" message="Prazdny staticky inicializacni blok nema vyznam."/>
+    <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" message="Za ukoncovaci slozenou zavorkou nemusi byt uveden strednik."/>
+	
+	<rule ref="category/java/errorprone.xml/UnnecessaryConversionTemporary" message="Primitivni datove typy prevadejte na String pres konstrukci typu Integer.toString(x)"/>
+    <rule ref="category/java/codestyle.xml/UnnecessaryReturn" message="Na tomto miste je prikaz return zbytecny"/>
+    <rule ref="category/java/design.xml/UselessOverridingMethod"  message="Zbytecne pretezovani metody predka."/>
+    <rule ref="category/java/errorprone.xml/UselessOperationOnImmutable" message="Operace na nemennych objektech (BigDecimal, BigInteger, ...) nemeni obsah objektu - vysledek priradte."/>
+	
+	<rule ref="category/java/codestyle.xml/ControlStatementBraces" message="Nepouzivejte prikaz za ''if'', ''else'', ''for'', ''while'' bez slozenych zavorek">
+    <properties>
+        <property name="checkIfElseStmt" value="true" />
+        <property name="checkSingleIfStmt" value="true" />
+        <property name="checkWhileStmt" value="true" />
+        <property name="checkForStmt" value="true" />
+        <property name="checkDoWhileStmt" value="true" />
+        <property name="checkCaseStmt" value="false" />
+        <property name="allowEmptyLoop" value="false" />
+    </properties>
+    </rule>
+    
+    <rule ref="category/java/design.xml/NPathComplexity" message="Ruznych cest pruchodu metodou ''{0}()'' je {1}, doporuceny limit je 200 (NPath complexity)."/>
+	<rule ref="category/java/design.xml/ExcessiveMethodLength" message="Vyhnete se prilis dlouhym metodam."/> 
+    <rule ref="category/java/design.xml/ExcessiveParameterList" message="Nepouzivejte metody, ktere maji prilis mnoho parametru (limit=10)."/> 
+	<rule ref="category/java/design.xml/ExcessiveClassLength" message="Tato trida ma prilis mnoho radek  (limit=1000), zkuste ji rozdelit."/>
+    <rule ref="category/java/design.xml/CyclomaticComplexity" message = "{0} ''{1}'' je prilis slozita (Cyclomatic Complexity of {3})."/>
+	<rule ref="category/java/design.xml/ExcessivePublicCount" message="Vysoky pocet verejnych metod a datovych atributu objektu znamena, ze trida muze byt byt prilis narocna pro testovani."/>
+	
+	<rule ref="category/java/design.xml/ExcessiveImports" message="Velky pocet importu je prikazem velke zavislosti tridy."/>
+	<rule ref="category/java/bestpractices.xml/LooseCoupling" message="Pro oznaceni typu promenne nepouzivejte konkretni tridu ''{0}''; vhodnejsi je pouziti rozhrani."/>
+	
+	<rule ref="category/java/design.xml/SimplifyBooleanReturns" message="Prikaz if..then..else je zbytecny, pokud se pouze vraci hodnota boolean."/>
+	<rule ref="category/java/design.xml/SimplifyBooleanExpressions" message="Vyhnete se zbytecnemu porovnavani booleovskych vyrazu."/>
+    <rule ref="category/java/bestpractices.xml/SwitchStmtsShouldHaveDefault" message="Prikaz 'switch' by mel obsahovat navesti 'default'."/>
+	<rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts" message="Mnoho vnorenych prikazu if..then se spatne cte."/>
+	<rule ref="category/java/bestpractices.xml/AvoidReassigningParameters" message="Prirazovani hodnoty parametru ''{0}'' metody je problematicke. Pouzijte lokalni promenne."/>
+	<rule ref="category/java/design.xml/SwitchDensity" message="V prikazu 'switch' je velke mnozstvi prikazu za navestimi. Zkuste refaktorovat."/>
+	<rule ref="category/java/errorprone.xml/NonStaticInitializer" message="Vyhnete se pouzivani nestatickych inicializacnich bloku."/>
+	
+	<rule ref="category/java/errorprone.xml/ConstructorCallsOverridableMethod" message="Konstruktor vola metodu, ktera muze byt prekryta."/>
+	<rule ref="category/java/errorprone.xml/CloseResource" message="Ujistete se, ze zdroje (napr Connection, Statement a ResultSet objekty) jsou vzdy po vyuziti uzavreny."/>
+	<rule ref="category/java/errorprone.xml/BadComparison" message="Vyhnete se testu na rovnost, pokud pouzijete Double.NaN. Vzhledem k omezene presnosti pri porovnavani desetinnych cisel je pravdepodobne, ze toto porovnani zpusobi logicke chyby."/>
+	<rule ref="category/java/design.xml/ImmutableField" message="Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych."/>
+	
+	<rule ref="category/java/bestpractices.xml/DefaultLabelNotLastInSwitchStmt" message="V prikazu 'switch' by navesti 'default' melo byt posledni."/>
+	<rule ref="category/java/errorprone.xml/NonCaseLabelInSwitchStatement" message="Uvnitr prikazu switch by nemela byt umistena navesti pro skoky."/>
+	<rule ref="category/java/errorprone.xml/EqualsNull" message="Pro porovnavani s hodnotout null nepouzivejte equals()"/>
+	<rule ref="category/java/codestyle.xml/AvoidProtectedFieldInFinalClass" message="Pouzivani modifikatoru 'protected' ve tridach oznacenych 'final' nema vyznam."/>
+	<rule ref="category/java/errorprone.xml/AssignmentToNonFinalStatic" message="Prirazovat v konstruktoru hodnotu do promenne static, ktera neni final je nebezpecne (pri vytvoreni dalsi instance se prepise hodnota)."/>
+	<rule ref="category/java/bestpractices.xml/PreserveStackTrace" message="Pri vytvareni nove vyjimky v bloku catch by se mela predat odchycena vyjimka jako parametr."/>
+	<rule ref="category/java/design.xml/SingularField" message="Datovy atribut ''{0}'' se pouziva pouze v jedne metode. Pravdepodobne se muze zmenit na lokalni promennou metody."/>
+	
+	<rule ref="category/java/errorprone.xml/ReturnEmptyArrayRatherThanNull" message="Vhodnejsi je vracet prazdne pole nez hodnotu null."/>
+	<rule ref="category/java/documentation.xml/UncommentedEmptyMethodBody" message="Pokud prazdnou metodu potrebujete, doplnte do ni komentar, proc je prazdna."/>
+	<rule ref="category/java/documentation.xml/UncommentedEmptyConstructor" message="Pokud prazdny konstruktor potrebujete, doplnte do nej komentar, proc je prazdny."/>
+    
+	<rule ref="category/java/codestyle.xml/DuplicateImports" message="Vyvarujte se duplicitnich importu jako ''{0}''"/>
+	<rule ref="category/java/codestyle.xml/DontImportJavaLang" message="Neni vhodne importovat balicek 'java.lang'"/>
+	<rule ref="category/java/bestpractices.xml/UnusedImports" message="Zruste nevyuzite importy jako ''{0}''"/>
+	<rule ref="category/java/errorprone.xml/ImportFromSamePackage" message="Neni potreba importovat tridy/rozhrani ze stejneho baliku"/>
+	<rule ref="category/java/codestyle.xml/TooManyStaticImports" message="Prilis mnoho (>4) statickych importu vede k neprehlednemu kodu."/>
+	
+	<rule ref="category/java/errorprone.xml/JUnitSpelling" message="Nazev metody se prilis podoba metodam setUp a tearDown z JUnit."/>
+	<rule ref="category/java/errorprone.xml/TestClassWithoutTestCases" message="Jmeno tridy evokuje JUnit testy a pritom neobsahuje testy. Zmente jmeno tridy ci doplnte testy."/>
+	
+	
+	<rule ref="category/java/codestyle.xml/ShortMethodName" message="Nepouzivejte kratke nazvy metod."/>
+	<!--<rule ref="category/java/codestyle.xml/MethodNamingConventions" message="Jmeno metody nezacina malym pismenem."/>-->
+	<rule ref="category/java/codestyle.xml/ClassNamingConventions" message="Jmeno tridy nezacina velkym pismenem.">
+         <properties>
+         <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]+" />
+        </properties>
+     </rule>
+	<rule ref="category/java/codestyle.xml/AvoidDollarSigns" message="Nepouzivejte znak dolaru ve jmenu promenne/metody/tridy/rozhrani"/>
+	<rule ref="category/java/errorprone.xml/MethodWithSameNameAsEnclosingClass" message="Tridy by nemely mit metody se stejnym nazvem jako jmeno tridy (neplati pro konstruktory)."/>
+	<rule ref="category/java/errorprone.xml/SuspiciousHashcodeMethodName" message="Nazev metody se prilis podoba metode hashCode()."/>
+	<rule ref="category/java/errorprone.xml/SuspiciousEqualsMethodName" message="Hlavicka metody se prilis podoba metode equals(Object o)."/>
+	<rule ref="category/java/codestyle.xml/PackageCase" message="Jmeno balicku nema obsahovat velka pismena."/>
+	
+	<rule ref="category/java/design.xml/SignatureDeclareThrowsException" message="V hlavicce konstruktoru ci metody by se nemela vyhazovat vyjimka Exception, ale konkretni potomek"/>
+	<rule ref="category/java/design.xml/ExceptionAsFlowControl" message="Nepouzivejte vyjimky pro rizeni behu programu"/>
+	<rule ref="category/java/errorprone.xml/AvoidCatchingNPE" message="Neodchytavejte NullPointerException; upravte kod tak, aby tato vyjimka nenastala."/>
+	<rule ref="category/java/errorprone.xml/DoNotThrowExceptionInFinally" message="Nevyvolavejte vyjimky v bloku finally, obtizne se pote sleduje prubeh programu."/>
+	
+	<rule ref="category/java/performance.xml/StringInstantiation" message="Obvykle je zbytecne vytvaret instance tridy String pomoci konstruktoru."/>
+	<rule ref="category/java/performance.xml/StringToString" message="Nevolejte metodu toString() u instance tridy String, je to zbytecne"/>
+	<rule ref="category/java/performance.xml/InefficientStringBuffering" message="Nespojujte retezce pomoci + v konstruktoru tridy StringBuffer (nebo StringBuilder) ci v metode append() techto trid."/>
+	<rule ref="category/java/errorprone.xml/UnnecessaryCaseChange" message="Zbytecny prevod na mala/velka pismena - pro porovnani je vhodnejsi pouzit String.equalsIgnoreCase() nez String.toUpperCase().equals()."/>
+	<rule ref="category/java/errorprone.xml/UseEqualsToCompareStrings" message="Pro porovnani obsahu retezcu pouzijte equals(), nepouzivejte ''=='' ci ''!=''."/>
+	
+	<rule ref="category/java/bestpractices.xml/UnusedPrivateField" message="Privatni promenna ''{0}'' neni nikde v kodu pouzita"/>
+	<rule ref="category/java/bestpractices.xml/UnusedLocalVariable" message="Lokalni promenna ''{0}'' neni nikde v metode pouzita"/>
+	<rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" message="Privatni metoda ''{0}'' neni nikde ve tride pouzita."/>
+	<rule ref="category/java/bestpractices.xml/UnusedFormalParameter" message="Formalni parametr metody ''{1}'' neni nikde v metode pouzity."/>
+
+</ruleset>
