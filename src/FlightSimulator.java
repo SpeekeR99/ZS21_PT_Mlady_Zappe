@@ -325,18 +325,32 @@ public class FlightSimulator {
      * @return formatted string
      */
     private String formatOutput(FlightState event, long curTime, int planeIndex, int curHorse, long departure, int next) {
-        return switch (event) {
-            case Start -> String.format(event.pat, curTime, planeIndex, curHorse, next);
+        String ret = "";
+        switch (event) {
+            case Start:
+                ret = String.format(event.pat, curTime, planeIndex, curHorse, next);
+                break;
 
-            case Naklad_A_Dalsi -> String.format(event.pat, curTime, planeIndex, curHorse, departure, next);
+            case Naklad_A_Dalsi:
+                ret = String.format(event.pat, curTime, planeIndex, curHorse, departure, next);
+                break;
 
-            case Naklad_A_Francie -> String.format(event.pat, curTime, planeIndex, curHorse, departure);
+            case Naklad_A_Francie:
+                ret = String.format(event.pat, curTime, planeIndex, curHorse, departure);
+                break;
 
-            case Francie_A_Dalsi -> String.format(event.pat, curTime, planeIndex, departure, next);
+            case Francie_A_Dalsi:
+                ret = String.format(event.pat, curTime, planeIndex, departure, next);
+                break;
 
-            case Konec -> String.format(event.pat, curTime, planeIndex, departure);
+            case Konec:
+                ret = String.format(event.pat, curTime, planeIndex, departure);
+                break;
 
-        };
+            default:
+                break;
+        }
+        return ret;
     }
 }
 

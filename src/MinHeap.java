@@ -1,5 +1,7 @@
 package src;
 
+import java.util.Objects;
+
 /**
  * a Min heap for the closest neighbour algorithm
  */
@@ -99,5 +101,69 @@ public class MinHeap {
  * knows the value of the ending node of the edge
  * knows the weight of the edge
  */
-record HeapElement(int node, double weight) {
+final class HeapElement {
+
+    /**
+     * Ending node of the edge
+     */
+    private final int node;
+    /**
+     * Weight of the edge
+     */
+    private final double weight;
+
+    /**
+     * Constructor sets up values
+     *
+     * @param node   ending node of the edge
+     * @param weight weight of the edge
+     */
+    HeapElement(int node, double weight) {
+        this.node = node;
+        this.weight = weight;
+    }
+
+    /**
+     * Getter for node
+     *
+     * @return node
+     */
+    public int node() {
+        return node;
+    }
+
+    /**
+     * Getter for weight
+     *
+     * @return weight
+     */
+    public double weight() {
+        return weight;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        var that = (HeapElement) obj;
+        return this.node == that.node &&
+                Double.doubleToLongBits(this.weight) == Double.doubleToLongBits(that.weight);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(node, weight);
+    }
+
+    @Override
+    public String toString() {
+        return "HeapElement[" +
+                "node=" + node + ", " +
+                "weight=" + weight + ']';
+    }
+
 }
